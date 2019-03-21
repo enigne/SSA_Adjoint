@@ -59,7 +59,7 @@ for time_count = 1:time_lapse
     txx = 0.25*rhoi*g*H*(1.-rhoi/rhow); % on h-grid
     
     if time_count==1 % initialization of velocity field with SIA
-        ub=C.^(-1./m)*abs(taud.^(1./m-1.)).*taud; % basal velocity (m/year) on u-grid
+        ub=C.^(-1./m).*abs(taud.^(1./m-1.)).*taud; % basal velocity (m/year) on u-grid
         u=ub+2./(n+2.)*A*hstag.*abs(taud).^(n-1.).*taud; % ice velocity in ice sheet
     end
     
@@ -69,7 +69,7 @@ for time_count = 1:time_lapse
     x_grl = (1-f(grlj)+df*x(grlj))./df;
     x_sub = x_grl - x(grlj);
     subBeta = dx/x_sub;
-    if subBeta > 2.5
+    if subBeta > 1.5
         subBeta = 0;
     end
     % Solve SSA
