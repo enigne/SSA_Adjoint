@@ -1,4 +1,4 @@
-function [psi,fi,wght,bwght,A,f,fic,eta,beta,fix,psix,hx,ux,B,G,K]=adjssa(N,n,ist,xst,sigma,u,H,betain,bxc,AA,rhoig,h,x0,xN)
+function [psi,fi,wght,bwght,A,f,fic,eta,beta,fix,psix,hx,ux,B,G,K]=adjssa(N,n,ist,sigma,u,H,bxc,AA,rhoig,dx)
 % solve for the adjoint of the SSA equation
 % Input
 % N=number of inner points, boundaries at 0 and N+1
@@ -48,8 +48,8 @@ function [psi,fi,wght,bwght,A,f,fic,eta,beta,fix,psix,hx,ux,B,G,K]=adjssa(N,n,is
     %
     p=(1-n)/n;
     N1=N-1;
-    hh=2*h;
-    h2=h^2;
+    hh=2*dx;
+    h2=dx^2;
     % u derivative
     for i=2:N1
         ux(i)=(u(i+1)-u(i-1))/hh;
@@ -74,10 +74,10 @@ function [psi,fi,wght,bwght,A,f,fic,eta,beta,fix,psix,hx,ux,B,G,K]=adjssa(N,n,is
 %    Fh(iGL)=u(iGL)/h;
     gaussfact=1/sqrt(2*pi*sigma^2);
     for i=1:N
-        xi(i)=(i-ist)*h;
+        xi(i)=(i-ist)*dx;
         Fu(i)=gaussfact*exp(-xi(i)^2/(2*sigma^2));
     end
-    Fint=h*sum(Fu)
+    Fint=dx*sum(Fu)
     Fu=Fu./Fint;
     % viscosity, fi coeff in first eq, bottom derivative
     for i=1:N
@@ -100,19 +100,19 @@ function [psi,fi,wght,bwght,A,f,fic,eta,beta,fix,psix,hx,ux,B,G,K]=adjssa(N,n,is
     jp=2*i+1;
     kp=2*i+2;
     % 1st eq
-    A(j,j)=-u(i)/h;
-    A(j,jp)=u(i)/h;
-    A(j,k)=-fic(i)/h+bx(i)*rhoig;
-    A(j,kp)=fic(i)/h;
+    A(j,j)=-u(i)/dx;
+    A(j,jp)=u(i)/dx;
+    A(j,k)=-fic(i)/dx+bx(i)*rhoig;
+    A(j,kp)=fic(i)/dx;
     f(j)=Fh(i);
     % 2nd eq
-    A(k,j)=H(i)/h;
-    A(k,jp)=-H(i)/h;
+    A(k,j)=H(i)/dx;
+    A(k,jp)=-H(i)/dx;
     etaHp=(eta(i+1)*H(i+1)+eta(i)*H(i))/(2*nn);
     A(k,k)=-2*etaHp/h2-beta(i)*m;
     A(k,kp)=etaHp/h2;
-        B(i,1)=H(i)/h;
-        B(i,2)=-H(i)/h;
+        B(i,1)=H(i)/dx;
+        B(i,2)=-H(i)/dx;
         B(i,4)=-2*etaHp/h2;
         B(i,5)=-beta(i)*m;
         B(i,3)=0;
@@ -130,29 +130,29 @@ function [psi,fi,wght,bwght,A,f,fic,eta,beta,fix,psix,hx,ux,B,G,K]=adjssa(N,n,is
         kp=2*i+2;
         km=2*i-2;
         % 1st eq
-        A(j,jm)=gam1(i)/h;
-        A(j,j)=-u(i)/h-2*gam1(i)/h;
-        A(j,jp)=u(i)/h+gam1(i)/h;
-        A(j,km)=gam2(i)/h;
-        A(j,k)=-fic(i)/h+bx(i)*rhoig-2*gam2(i)/h;
-        A(j,kp)=fic(i)/h+gam2(i)/h;
-        G(i,1)=-u(i)/h;
-        G(i,2)=u(i)/h;
-        G(i,3)=-fic(i)/h;
-        G(i,4)=fic(i)/h;
+        A(j,jm)=gam1(i)/dx;
+        A(j,j)=-u(i)/dx-2*gam1(i)/dx;
+        A(j,jp)=u(i)/dx+gam1(i)/dx;
+        A(j,km)=gam2(i)/dx;
+        A(j,k)=-fic(i)/dx+bx(i)*rhoig-2*gam2(i)/dx;
+        A(j,kp)=fic(i)/dx+gam2(i)/dx;
+        G(i,1)=-u(i)/dx;
+        G(i,2)=u(i)/dx;
+        G(i,3)=-fic(i)/dx;
+        G(i,4)=fic(i)/dx;
         G(i,5)=rhoig*bx(i);
         f(j)=Fh(i);
         % 2nd eq
-        A(k,jm)=gam(i)/h;
-        A(k,j)=H(i)/h-2*gam(i)/h;
-        A(k,jp)=-H(i)/h+gam(i)/h;
+        A(k,jm)=gam(i)/dx;
+        A(k,j)=H(i)/dx-2*gam(i)/dx;
+        A(k,jp)=-H(i)/dx+gam(i)/dx;
         etaHm=(eta(i-1)*H(i-1)+eta(i)*H(i))/(2*nn);
         etaHp=(eta(i+1)*H(i+1)+eta(i)*H(i))/(2*nn);
         A(k,k)=-(etaHm+etaHp)/h2-beta(i)*m;
         A(k,km)=etaHm/h2;
         A(k,kp)=etaHp/h2;
-        B(i,1)=H(i)/h;
-        B(i,2)=-H(i)/h;
+        B(i,1)=H(i)/dx;
+        B(i,2)=-H(i)/dx;
         B(i,4)=-(etaHm+etaHp)/h2;
         B(i,5)=-beta(i)*m;
         B(i,3)=etaHm/h2;
@@ -167,17 +167,17 @@ function [psi,fi,wght,bwght,A,f,fic,eta,beta,fix,psix,hx,ux,B,G,K]=adjssa(N,n,is
     jm=2*i-3;
     km=2*i-2;
     % 1st eq
-    A(j,j)=-u(i)/h-2*gam1(i)/h;
-    A(j,km)=gam2(i)/h;
-    A(j,k)=-fic(i)/h+bx(i)*rhoig-2*gam2(i)/h;
+    A(j,j)=-u(i)/dx-2*gam1(i)/dx;
+    A(j,km)=gam2(i)/dx;
+    A(j,k)=-fic(i)/dx+bx(i)*rhoig-2*gam2(i)/dx;
     f(j)=Fh(i);
     % 2nd eq
-    A(k,jm)=gam(i)/h;
-    A(k,j)=H(i)/h-2*gam(i)/h;
+    A(k,jm)=gam(i)/dx;
+    A(k,j)=H(i)/dx-2*gam(i)/dx;
     etaHm=(eta(i-1)*H(i-1)+eta(i)*H(i))/(2*n);
     A(k,k)=-2*etaHm/h2-beta(i)*m;
     A(k,km)=etaHm/h2;
-        B(i,1)=H(i)/h;
+        B(i,1)=H(i)/dx;
         B(i,2)=0;
         B(i,4)=-2*etaHm/h2;
         B(i,5)=-beta(i)*m;
@@ -218,7 +218,7 @@ function [psi,fi,wght,bwght,A,f,fic,eta,beta,fix,psix,hx,ux,B,G,K]=adjssa(N,n,is
     for i=2:N1
         fix(i)=(fi(i+1)-fi(i-1))/hh;
         hx(i)=(H(i+1)-H(i-1))/hh+bx(i);
-        psix(i)=(psi(i+1)-psi(i))/h;
+        psix(i)=(psi(i+1)-psi(i))/dx;
     end
     fix(1)=fix(2);
     psix(1)=psix(2);
