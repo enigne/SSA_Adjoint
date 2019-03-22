@@ -1,4 +1,13 @@
-function [gpos, H, u, beta]=FlowlineSSA(H, b, x, dx, N, A, C, m, n, rhoi, rhow, g, as, dt, T)
+function [gpos, H, u, beta]=FlowlineSSA(H, b, x, dx, N, A, C, m, n, rhoi, rhow, g, as, dt, T, u_init)
+if nargin < 16
+    useSIAinit = 1;
+    u=zeros(N,1);
+else
+    useSIAinit = 0;
+    figurePlot = 0;
+    u = u_init;
+    u(end) = NaN;
+end
 
 % D operators
 D1p = Dp(N);
@@ -6,7 +15,6 @@ D1m = Dm(N);
 
 
 % Initialize 
-u=zeros(N,1);
 hstag=zeros(N,1);
 xstag=zeros(N,1);
 bstag=zeros(N,1);
@@ -58,7 +66,7 @@ for time_count = 1:time_lapse
     taud = -rhoi*g.*hstag.*slope; % driving stress on u-grid
     txx = 0.25*rhoi*g*H*(1.-rhoi/rhow); % on h-grid
     
-    if time_count==1 % initialization of velocity field with SIA
+    if (time_count==1)  && (useSIAinit == 1)% initialization of velocity field with SIA
         ub=C.^(-1./m).*abs(taud.^(1./m-1.)).*taud; % basal velocity (m/year) on u-grid
         u=ub+2./(n+2.)*A*hstag.*abs(taud).^(n-1.).*taud; % ice velocity in ice sheet
     end
@@ -69,7 +77,7 @@ for time_count = 1:time_lapse
     x_grl = (1-f(grlj)+df*x(grlj))./df;
     x_sub = x_grl - x(grlj);
     subBeta = dx/x_sub;
-    if subBeta > 1.5
+    if subBeta > 1.0
         subBeta = 0;
     end
     % Solve SSA
@@ -80,20 +88,23 @@ for time_count = 1:time_lapse
     
 end %% end of time stepping
 
-disp(x(grlj)/1e3);
 gpos=x(grlj);
 
-% 
-figure(1)
-plot(x(2:end),H(2:end)+hb(2:end)); hold on;
-plot(x(2:end),b(2:end),'linewidth',2);
-plot(x(2:end),hb(2:end));
-hold off;
-ylim([-1000,5000])
-xlabel('x')
-ylabel('H')
-figure
-plot(x(2:end),u(2:end),'linewidth',2);
-xlabel('x')
-ylabel('v')
+%% plot
+if figurePlot
+    disp(x(grlj)/1e3);
+
+    % 
+    figure(1)
+    plot(x(2:end),H(2:end)+hb(2:end)); hold on;
+    plot(x(2:end),b(2:end),'linewidth',2);
+    plot(x(2:end),hb(2:end));
+    hold off;
+    ylim([-1000,5000])
+    xlabel('x')
+    ylabel('H')
+    figure(2)
+    plot(x(2:end),u(2:end),'linewidth',2);
+    xlabel('x')
+    ylabel('v')
 end
