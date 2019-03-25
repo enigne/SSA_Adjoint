@@ -1,4 +1,4 @@
-function [A11, A12, A21, A22, F1, F2]=constrauctAdjSSAMatrices(N, n, ist, sigma, u, H, bxc, Afact, rhoig, dx)
+function [A11, A12, A21, A22, F1, F2, ux, eta]=constrauctAdjSSAMatrices(N, n, ist, sigma, u, H, bxc, Afact, rhoig, dx)
 % solve for the adjoint of the SSA equation
 % Input
 % N=number of inner points, boundaries at 0 and N+1
@@ -87,19 +87,18 @@ A22 = Heta .* (Dp(N, dx) * Dm(N,dx)) + dHeta.* Dup(N,dx,dHeta) - m * spvardiag(b
 F1=Fh;
 F2=-Fu;
 
-% 
-% % % Boundary conditions
-% A11(N,:) = 0;
-% A11(N, N) = A11(N-1,N-1);
-% A12(N,:) = 0;
-% F1(N) = 0;
+%% Boundary conditions
+A11(N,:) = 0;
+A11(N, N) = A11(N-1,N-1);
+A12(N,:) = 0;
+F1(N) = 0;
 
 % A21(1, :) = 0;
 % A21(N, :) = 0;
-
-% A22(1, :) = 0;
-% A22(N, :) = 0;
-% A22(1, 1) = A22(2, 2);
-% A22(N, N) = A22(N-1, N-1);
-% F2(1) = 0;
-% F2(N) = 0;
+% 
+A22(1, :) = 0;
+A22(N, :) = 0;
+A22(1, 1) = A22(2, 2);
+A22(N, N) = A22(N-1, N-1);
+F2(1) = 0;
+F2(N) = 0;
