@@ -4,7 +4,7 @@ close all
 addpath('SSA')
 %% Load final H and u from init file
 load('DATA/SSAinit_N400.mat')
-saveFlag = 1;
+saveFlag = 0;
 %% Setup restart
 ist = [1:266];
 Nist = length(ist);
