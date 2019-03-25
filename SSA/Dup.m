@@ -16,9 +16,10 @@ function D = Dup(N, dx, upFlag, BCFlag)
     D1p = Dp(N, 1, BCFlag);
     D1m = Dm(N, 1, BCFlag);
         
+    upSign = (upFlag > 0);
     % Sign matrix
-    Pup = spvardiag(upFlag);
-    Pdown = spvardiag(ones(N,1)- upFlag);
+    Pup = spvardiag(upSign);
+    Pdown = spvardiag(ones(N,1)- upSign);
  
     % Upwind shceme
     D = Pup*D1p + Pdown*D1m;
