@@ -3,7 +3,7 @@ close all
 %%
 addpath('SSA')
 %% Load final H and u from init file
-load('DATA/SSAinit_N400.mat')
+load('DATA/SSAinit_N800.mat')
 
 %% Setup restart
 N_restart = 10;
@@ -14,15 +14,15 @@ dt = 0.1;
 
 %% Solve SSA GL problem
 for i = 1: N_restart
-    [gpos, H, u, beta]=FlowlineSSA(H, b, x, dx, Nx, A, C, m, n, rhoi, rhow, g, as, dt, dt, u);
+    [glInd, H, u, beta]=FlowlineSSA(H, b, x, dx, Nx, A, C, m, n, rhoi, rhow, g, as, dt, dt, u);
     H_mat(:, i) = H;
     u_mat(:, i) = u;
-    gpos_vec(i) = gpos;
+    gpos_vec(i) = glInd;
 end
 %% For adjSSA you need the input
 rhoig = rhoi*g;
-sigma= 0.1e4; 
-ist = 100;
+sigma= 0.5e2; 
+ist = 150;
 n=3;
 x = x(2:end);
 Nx = length(x)+1;
@@ -32,17 +32,19 @@ Ascal = 1e-6;
 %% Solve backward in time
 psi_old = zeros(Nx-1, 1);
 I = eye(Nx-1);
+% Artificial viscosity
+epsilon = 0;
 
 for i =  N_restart:-1:1
     % get the forward solutions
-    u = u_mat(:,1);
-    H = H_mat(:,1);
+    u = u_mat(:,i);
+    H = H_mat(:,i);
     u = u(2:end);
     % H on stagger grid
     H = (H(1:end-1)+H(2:end)) * 0.5;
     % construct Adjoint matrices
 %     [A11, A12, A21, A22, F1, F2]=constrauctAdjSSA(Nx-1,n,ist,sigma,u,H,mean(bxc),A,rhoig,dx);
-    [A11, A12, A21, A22, F1, F2]=constrauctAdjSSAMatrices(Nx-1,n,ist,sigma,u,H,mean(bxc),A,rhoig,dx);
+    [A11, A12, A21, A22, F1, F2, ux, eta, beta]=constrauctAdjSSAMatrices(Nx-1,n,ist,sigma,u,H,mean(bxc),A,rhoig,dx, glInd, epsilon);
     % Time stepping
     Q = [A11 - 1./dt .* I,	A12;
         A21,                A22;];
@@ -73,4 +75,13 @@ end
 pert = sum(wght.*C(1:end-1)*0.01)*dx;
 
 %%
-% [psi,fi,wght,bwght,A,f,fic,eta,beta,fix,psix,hx,ux,B,G,K]=adjssa(Nx-1,n,ist,sigma,u,H,mean(bxc),A,rhoig,dx);
+figure
+t1 = Dcd(Nx-1,dx)*(1./n.*H.*eta.* (Dcd(Nx-1,dx)*fi_old));
+t2 =-m*beta.*fi_old;
+t3 = -H.*(Dcd(Nx-1,dx)*psi_old);
+% subplot(3,1,1)
+plot(t1+t2+t3)
+
+% hold on
+% plot(F2)
+% plot(A21*psi_old+A22*fi_old -F2)

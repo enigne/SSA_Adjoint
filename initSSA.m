@@ -40,7 +40,7 @@ C = (C/(secperyear^m))*ones(size(x));
 A = A*secperyear;
 
 %% Solve SSA GL problem
-[~, H, u, beta]=FlowlineSSA(H, b, x, dx, Nx, A, C, m, n, rhoi, rhow, g, as, dt, T);
+[GLpos, H, u, beta]=FlowlineSSA(H, b, x, dx, Nx, A, C, m, n, rhoi, rhow, g, as, dt, T);
 % u = u(2:end);
 % % H on stagger grid
 % H = (H(1:end-1)+H(2:end)) * 0.5;

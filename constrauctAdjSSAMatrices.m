@@ -1,4 +1,4 @@
-function [A11, A12, A21, A22, F1, F2, ux, eta, beta]=constrauctAdjSSAMatrices(N, n, ist, sigma, u, H, bxc, Afact, rhoig, dx)
+function [A11, A12, A21, A22, F1, F2, ux, eta, beta]=constrauctAdjSSAMatrices(N, n, ist, sigma, u, H, bxc, Afact, rhoig, dx, glInd, epsilon)
 % solve for the adjoint of the SSA equation
 % Input
 % N=number of inner points, boundaries at 0 and N+1
@@ -35,14 +35,10 @@ gam1=gam;
 gam2=gam;
 Fh=ux;
 Fu=ux;
-A22 = zeros(N, N);
-F1 = ux;
-F2 = ux;
 %
 p=(1-n)/n;
 N1=N-1;
 hh=2*dx;
-h2=dx^2;
 % u derivative
 for i=2:N1
     ux(i)=(u(i+1)-u(i-1))/hh;
@@ -77,15 +73,27 @@ for i=1:N
     bx(i)=bxc;
 end
 
+% add artifical viscosity
+% epsilon
+% D2(N,dx)
+visco = zeros(N,1);
+for i = 1:N
+    if abs(i - glInd) >=0
+        visco(i) = epsilon;
+    end
+end
+ArtiV = dx * visco .* D2(N,dx)  ;
 
+% construct matrix
 Heta = 1./ n .* H .* eta;
 dHeta = Dcd(N,dx)*Heta;
-A11 = u .* Dup(N, dx, -u);
+A11 = u .* Dup(N, dx, -u) + ArtiV;
 A12 = fic .* Dup(N, dx, -fic) + spvardiag(bx)*rhoig;
 A21 = - H .* Dup(N, dx, H);
-A22 = Heta .* (Dp(N, dx) * Dm(N,dx)) + dHeta.* Dup(N,dx,dHeta) - m * spvardiag(beta);
+A22 = Heta .* (Dp(N, dx) * Dm(N,dx)) + dHeta.* Dup(N,dx,dHeta) - m * spvardiag(beta) + ArtiV;
 F1=Fh;
 F2=-Fu;
+
 
 %% Boundary conditions
 
