@@ -4,7 +4,7 @@ close all
 addpath('SSA')
 saveFlag = 1;
 %%
-N = 400;
+N = 1600;
 Nx = N + 2;
 L = 16e5;
 dx = L/(N);
@@ -12,12 +12,13 @@ x = linspace(-dx,L,Nx)';
 
 %%
 b =  -(-720 +778.5*(x/7.5e5) );
-dt = 2;
+dt = 1;
 T = 30000;
 
 %% symmetric ice divide (extra grid point)
 b(1)=b(3);
 bxc = diff(b)/dx;
+
 H=zeros(Nx,1)+10;
 
 %% Constants

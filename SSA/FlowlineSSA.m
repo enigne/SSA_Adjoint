@@ -2,6 +2,7 @@ function [gpos, H, u, beta]=FlowlineSSA(H, b, x, dx, N, A, C, m, n, rhoi, rhow, 
 if nargin < 16
     useSIAinit = 1;
     u=zeros(N,1);
+    figurePlot = 1;
 else
     useSIAinit = 0;
     figurePlot = 0;

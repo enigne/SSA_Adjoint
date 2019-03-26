@@ -6,11 +6,11 @@ addpath('SSA')
 load('DATA/SSAinit_N400.mat')
 
 %% Setup restart
-N_restart = 100;
+N_restart = 10;
 H_mat = zeros(length(H), N_restart);
 u_mat = zeros(length(u), N_restart);
 gpos_vec = zeros(1, N_restart);
-dt = 1;
+dt = 0.1;
 
 %% Solve SSA GL problem
 for i = 1: N_restart
@@ -21,8 +21,8 @@ for i = 1: N_restart
 end
 %% For adjSSA you need the input
 rhoig = rhoi*g;
-sigma= 0.5e4; 
-ist = 150;
+sigma= 0.1e4; 
+ist = 100;
 n=3;
 x = x(2:end);
 Nx = length(x)+1;
@@ -41,7 +41,8 @@ for i =  N_restart:-1:1
     % H on stagger grid
     H = (H(1:end-1)+H(2:end)) * 0.5;
     % construct Adjoint matrices
-    [A11, A12, A21, A22, F1, F2]=constrauctAdjSSA(Nx-1,n,ist,sigma,u,H,mean(bxc),A,rhoig,dx);
+%     [A11, A12, A21, A22, F1, F2]=constrauctAdjSSA(Nx-1,n,ist,sigma,u,H,mean(bxc),A,rhoig,dx);
+    [A11, A12, A21, A22, F1, F2]=constrauctAdjSSAMatrices(Nx-1,n,ist,sigma,u,H,mean(bxc),A,rhoig,dx);
     % Time stepping
     Q = [A11 - 1./dt .* I,	A12;
         A21,                A22;];
@@ -52,14 +53,24 @@ for i =  N_restart:-1:1
     psi_old = psifi(1:Nx-1);
     fi_old = psifi(Nx:2*Nx-2);    
     
+    psi_old(end) = 0;
     
+    wght = -fi_old .* u.^m;
     
     figure(1)
-    subplot(2,1,1)
+    subplot(3,1,1)
     plot(x, psi_old)
-    subplot(2,1,2)
+    ylabel('$\psi$', 'Interpreter','latex')
+    subplot(3,1,2)
     plot(x, fi_old)
+    ylabel('$\phi$', 'Interpreter','latex')
+    subplot(3,1,3)
+    plot(x, wght)
+    ylabel('$\delta\beta$', 'Interpreter','latex')
 end
+
+%%
+pert = sum(wght.*C(1:end-1)*0.01)*dx;
 
 %%
 % [psi,fi,wght,bwght,A,f,fic,eta,beta,fix,psix,hx,ux,B,G,K]=adjssa(Nx-1,n,ist,sigma,u,H,mean(bxc),A,rhoig,dx);

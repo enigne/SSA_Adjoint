@@ -3,10 +3,10 @@ close all
 %%
 addpath('SSA')
 %% Load final H and u from init file
-load('DATA/SSAinit_N400.mat')
-saveFlag = 0;
+load('DATA/SSAinit_N1600.mat')
+saveFlag = 1;
 %% Setup restart
-ist = [1:266];
+ist = [1:1100];
 Nist = length(ist);
 psi_mat = zeros(N+1, Nist);
 phi_mat = zeros(N+1, Nist);
@@ -15,7 +15,7 @@ bwght_mat = zeros(N+1, Nist);
 
 %% For adjSSA you need the input
 rhoig = rhoi*g;
-sigma= 0.5e4;
+sigma= 0.5e3;
 n=3;
 x = x(2:end);
 Nx = length(x)+1;
@@ -48,20 +48,20 @@ for i =  1:Nist
     bwght_mat(:, i) = bwght;
 end
 
-%%
-figure
-subplot(2,2,1)
-plot(psi_mat)
-ylabel('$\psi$', 'Interpreter','latex')
-subplot(2,2,2)
-plot(phi_mat)
-ylabel('$\phi$', 'Interpreter','latex')
-subplot(2,2,3)
-plot(wght_mat)
-ylabel('$\delta C$ sensitivity', 'Interpreter','latex')
-subplot(2,2,4)
-plot(bwght_mat)
-ylabel('$\delta b$ sensitivity', 'Interpreter','latex')
+% %%
+% figure
+% subplot(2,2,1)
+% plot(psi_mat)
+% ylabel('$\psi$', 'Interpreter','latex')
+% subplot(2,2,2)
+% plot(phi_mat)
+% ylabel('$\phi$', 'Interpreter','latex')
+% subplot(2,2,3)
+% plot(wght_mat)
+% ylabel('$\delta C$ sensitivity', 'Interpreter','latex')
+% subplot(2,2,4)
+% plot(bwght_mat)
+% ylabel('$\delta b$ sensitivity', 'Interpreter','latex')
 
 %%
 if saveFlag 
