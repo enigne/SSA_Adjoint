@@ -1,4 +1,4 @@
-function [gpos, H, u, beta]=FlowlineSSA(H, b, x, dx, N, A, C, m, n, rhoi, rhow, g, as, dt, T, u_init)
+function [grlj, H, u, beta]=FlowlineSSA(H, b, x, dx, N, A, C, m, n, rhoi, rhow, g, as, dt, T, u_init)
 if nargin < 16
     useSIAinit = 1;
     u=zeros(N,1);
