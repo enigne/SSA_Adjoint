@@ -1,20 +1,42 @@
-clear
-close all
+% Adjoint SSA Solver with surface h coupling
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% The input variables:
+%   'N'                 - Number of nodes;       
+%   'transientFlag'     - 1: trasient adjoint, 0: steady state;       
+%   'uObs'              - Flag to take observation on u;       
+%   'HObs'              - Flag to take observation on H;       
+% The return values:
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Author: Cheng Gong
+% Date: 2019-03-27
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function adjointSSA(N, transientFlag, uObs, HObs)
+if nargin < 4
+    if nargin < 3
+        uObs = 1;
+        if nargin < 2
+            transientFlag = 0;
+        end
+    end
+    HObs = 1 - uObs;
+end
+    
 %%
 addpath('SSA')
 %% Load final H and u from init file
-load('DATA/SSAinit_N400.mat')
+load(['DATA/SSAinit_N', num2str(N), '.mat'])
 saveFlag = 1;
 %% Setup restart
-ist = [1:260];
+
+ist = [1:GLpos-1];
 N_restart = 1;
-transientFlag = 1;
+dt = 1;
+%% Initialization
+Nist = length(ist);
 H_mat = zeros(length(H), N_restart);
 u_mat = zeros(length(u), N_restart);
 gpos_vec = zeros(N_restart,1);
-dt = 1;
-
-Nist = length(ist);
 psi_mat = zeros(N+1, Nist, N_restart);
 phi_mat = zeros(N+1, Nist, N_restart);
 wght_mat = zeros(N+1, Nist, N_restart);
@@ -47,12 +69,13 @@ for i =  1:Nist
         xAdj = x(2:glInd);
         Nx = length(xAdj)+1;
         I = eye(Nx-1);
-        
+        % forward solution
         u = u(2:glInd);
         % H on stagger grid
         H = (H(1:glInd-1)+H(2:glInd)) * 0.5;
         % construct Adjoint matrices
-        [A11, A12, A21, A22, F1, F2, ux, eta]=constrauctAdjSSAMatrices(Nx-1,n,ist(i),sigma,u,H,mean(bxc),A,rhoig,dx,glInd,epsilon);
+        [A11, A12, A21, A22, F1, F2, ux, eta]=constrauctAdjSSAMatrices(...
+            Nx-1, n, ist(i), sigma, u, H, mean(bxc), A, rhoig, dx, uObs, HObs, glInd, epsilon);
         % Time stepping
         Q = [A11 - transientFlag*1./dt .* I,	A12;
             A21,                                A22;];
@@ -64,7 +87,7 @@ for i =  1:Nist
         psi = psifi(1:Nx-1);
         phi = psifi(Nx:2*Nx-2);
 
-        phi(ist(i)+5:end)=0;
+        phi(ist(i):end)=0;
 
         wght = -phi .* u.^m;
         bwght = (Dp(Nx-1, dx)*psi).*u + (Dcd(Nx-1,dx)* phi) .*eta .* ux+ rhoig*phi.*(Dcd(Nx-1,dx)*H + bxc(1:Nx-1));
@@ -78,9 +101,17 @@ end
 
 %%
 if saveFlag
-    if transientFlag
-        save(['DATA/SSAAdjointTransient_T', num2str(N_restart) ,'_N', num2str(N) ,'.mat'], 'x', 'ist', 'psi_mat', 'phi_mat', 'wght_mat', 'bwght_mat');
+    if uObs
+        obsName = 'u';
     else
-        save(['DATA/SSAAdjoint_N', num2str(N) ,'.mat'], 'x', 'ist', 'psi_mat', 'phi_mat', 'wght_mat', 'bwght_mat');
+        obsName = 'H';
+    end
+    
+    if transientFlag
+        save(['DATA/SSAAdjoint_N', num2str(N), '_T', num2str(N_restart), '_', obsName ,'.mat'], ...
+            'x', 'ist', 'psi_mat', 'phi_mat', 'wght_mat', 'bwght_mat');
+    else
+        save(['DATA/SSAAdjoint_N', num2str(N), '_',obsName , '.mat'], ...
+            'x', 'ist', 'psi_mat', 'phi_mat', 'wght_mat', 'bwght_mat');
     end
 end
