@@ -61,16 +61,10 @@ else
 end
 
 % viscosity, fi coeff in first eq, bottom derivative
-for i=1:N
-    eta(i)=Afact*abs(ux(i))^p;
-    fic(i)=eta(i)*ux(i)-rhoig*H(i);
-end
-for i=1:ist
-    beta(i)=Cbeta*abs(u(i))^mm1;
-end
-for i=1:N
-    bx(i)=bxc;
-end
+eta = Afact*abs(ux).^p;
+fic = eta .* ux -rhoig*H;
+beta = Cbeta .* abs(u).^mm1;
+bx = bxc* ones(N,1);
 
 % add artifical viscosity
 % epsilon
@@ -95,18 +89,22 @@ F2=-Fu;
 
 
 %% Boundary conditions
-
+% psi(N) = 0
 A11(N,:) = 0;
 A11(N, N) = A11(N-1,N-1);
 A12(N,:) = 0;
 F1(N) = 0;
 
-% A21(1, :) = 0;
-% A21(N, :) = 0;
-%
-A22(1, :) = 0;
-A22(N, :) = 0;
-A22(1, 1) = A22(2, 2);
-A22(N, N) = A22(N-1, N-1);
+% phi(0)'= psi(0)' = 0
+A11(1, 2) = -A11(1, 1);
+A12(1, 2) = -A12(1, 1);
+A21(1, 2) = -A21(1, 1);
+A22(1, 2) = -A22(1, 1);
 F2(1) = 0;
+F1(1) = 0;
+
+% phi(N) = 0
+A21(N, :) = 0;
+A22(N, :) = 0;
+A22(N, N) = A22(N-1, N-1);
 F2(N) = 0;

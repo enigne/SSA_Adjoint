@@ -1,5 +1,5 @@
 clear
-% close all
+close all
 %%
 addpath('SSA')
 %% Load final H and u from init file
@@ -23,7 +23,7 @@ for i = 1: N_restart
 end
 %% For adjSSA you need the input
 rhoig = rhoi*g;
-sigma= 5e3; 
+sigma= 1e3; 
 ist = 200;
 n=3;
 
@@ -31,8 +31,8 @@ n=3;
 psi_old = zeros(N+1, 1);
 phi_old = zeros(N+1, 1);
 % Artificial viscosity
-epsilon = 1e4;
-Ascale = 1;
+epsilon = 1e-3;
+Ascale = 1e6;
 for i =  N_restart:-1:1
     % get the forward solutions
     u = u_mat(:,i);
@@ -57,7 +57,7 @@ for i =  N_restart:-1:1
         F2;];
 
     psifi = Q\rhs;
-    psi_old = psifi(1:Nx-1)/Ascale;
+    psi_old = psifi(1:Nx-1)*Ascale;
     phi_old = psifi(Nx:2*Nx-2);    
    
 %     phi_old(ist-2:end)=0;
@@ -79,16 +79,17 @@ end
 pert = sum(wght.*C(1:glInd-1)*0.01)*dx;
 
 %%
-figure
+
 t1 = Dcd(Nx-1,dx)*(1./n.*H.*eta.* (Dcd(Nx-1,dx)*phi_old));
 t2 =-m*beta.*phi_old;
 t3 = -H.*(Dcd(Nx-1,dx)*psi_old);
-subplot(3,1,1)
-plot(t1)
-subplot(3,1,2)
-plot(t2)
-subplot(3,1,3)
-plot(t3)
+% figure
+% subplot(3,1,1)
+% plot(t1)
+% subplot(3,1,2)
+% plot(t2)
+% subplot(3,1,3)
+% plot(t3)
 %%
 figure
 plot(t1+t2+t3)

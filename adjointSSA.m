@@ -1,34 +1,44 @@
 % Adjoint SSA Solver with surface h coupling
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % The input variables:
-%   'N'                 - Number of nodes;       
-%   'transientFlag'     - 1: trasient adjoint, 0: steady state;       
-%   'uObs'              - Flag to take observation on u;       
-%   'HObs'              - Flag to take observation on H;       
+%   'N'                 - Number of nodes;
+%   'transientFlag'     - 1: trasient adjoint, 0: steady state;
+%   'uObs'              - Flag to take observation on u;
+%   'HObs'              - Flag to take observation on H;
+%   'sigma'          	- width of the observation function F, it is 
+%                           automaticaly scaled to such that the area is 1;
+%   'epsilon'          	- Artificial viscosity for the right boundary close
+%                           to grounding line;
 % The return values:
 %
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Author: Cheng Gong
 % Date: 2019-03-27
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function adjointSSA(N, transientFlag, uObs, HObs)
-if nargin < 4
-    if nargin < 3
-        uObs = 1;
-        if nargin < 2
-            transientFlag = 0;
+function adjointSSA(N, transientFlag, uObs, HObs, sigma, epsilon)
+if nargin < 6
+    % Artificial viscosity
+    epsilon = 1e4;
+    if nargin < 5
+        % width of the observation
+        sigma= 0.5e3;
+        if nargin < 4
+            if nargin < 3
+                uObs = 1;
+                if nargin < 2
+                    transientFlag = 0;
+                end
+            end
+            HObs = 1 - uObs;
         end
     end
-    HObs = 1 - uObs;
 end
-    
 %%
 addpath('SSA')
 %% Load final H and u from init file
 load(['DATA/SSAinit_N', num2str(N), '.mat'])
 saveFlag = 1;
 %% Setup restart
-
 ist = [1:GLpos-1];
 N_restart = 1;
 dt = 1;
@@ -44,20 +54,16 @@ bwght_mat = zeros(N+1, Nist, N_restart);
 
 %% Solve SSA GL problem
 for i = 1: N_restart
-    [glInd, H, u, beta]=FlowlineSSA(H, b, x, dx, Nx, A, C, m, n, rhoi, rhow, g, as, dt, dt, u);
+    [glInd, H, u, ~]=FlowlineSSA(H, b, x, dx, Nx, A, C, m, n, rhoi, rhow, g, as, dt, dt, u);
     H_mat(:, i) = H;
     u_mat(:, i) = u;
     gpos_vec(i) = glInd;
 end
 %% For adjSSA you need the input
 rhoig = rhoi*g;
-sigma= 0.5e2;
-n=3;
-
+n = 3;
 %% Solve backward in time
 psi_old = zeros(N+1, 1);
-% Artificial viscosity
-epsilon = 1e4;
 
 for i =  1:Nist
     for t =  N_restart:-1:1
@@ -81,14 +87,12 @@ for i =  1:Nist
             A21,                                A22;];
         rhs = [F1 - transientFlag*1./dt .* psi_old(1:glInd-1);
             F2;];
-        
+        % solve
         psifi = Q\rhs;
-        
         psi = psifi(1:Nx-1);
         phi = psifi(Nx:2*Nx-2);
-
-        phi(ist(i):end)=0;
-
+        
+        % sensitivity
         wght = -phi .* u.^m;
         bwght = (Dp(Nx-1, dx)*psi).*u + (Dcd(Nx-1,dx)* phi) .*eta .* ux+ rhoig*phi.*(Dcd(Nx-1,dx)*H + bxc(1:Nx-1));
         
@@ -99,7 +103,7 @@ for i =  1:Nist
     end
 end
 
-%%
+%% save to data files
 if saveFlag
     if uObs
         obsName = 'u';
