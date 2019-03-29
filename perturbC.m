@@ -9,9 +9,9 @@ saveFlag = 1;
 
 %%
 pertubation = 0.01;
-lWin = 900e3;
-rWin = 1000e3;
-dC = pertubation.*C.*((x>lWin)&(x<rWin));
+lWin = 0e3;
+rWin = 1600e3;
+dC = pertubation.*C.*((x>=lWin)&(x<=rWin));
 
 %% Setup restart
 N_restart = 20000;

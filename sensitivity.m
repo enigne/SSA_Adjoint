@@ -1,14 +1,14 @@
 clear
-% close all
+close all
 %%
 addpath('SSA')
 %%
-N = 800;
+N = 1600;
 uObs = 1;
-transientFlag = 0;
+transientFlag = 1;
 N_restart = 1;
 pertubation = 0.01;
-lWin = 0;
+lWin = 900;
 
 %%
 if uObs

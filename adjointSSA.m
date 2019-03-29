@@ -18,10 +18,10 @@
 function adjointSSA(N, transientFlag, uObs, HObs, sigma, epsilon)
 if nargin < 6
     % Artificial viscosity
-    epsilon = 1e4;
+    epsilon = 1e3;
     if nargin < 5
         % width of the observation
-        sigma= 0.5e3;
+        sigma= 0.5e4;
         if nargin < 4
             if nargin < 3
                 uObs = 1;

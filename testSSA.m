@@ -3,7 +3,7 @@ close all
 %%
 addpath('SSA')
 %% Load final H and u from init file
-load('DATA/SSAinit_N1600.mat')
+load('DATA/SSAinit_N800.mat')
 %% Setup restart
 N_restart = 1;
 uObs = 1;
@@ -23,16 +23,16 @@ for i = 1: N_restart
 end
 %% For adjSSA you need the input
 rhoig = rhoi*g;
-sigma= 1e3; 
-ist = 200;
+sigma= 5e3; 
+ist = 535;
 n=3;
 
 %% Solve backward in time
 psi_old = zeros(N+1, 1);
 phi_old = zeros(N+1, 1);
 % Artificial viscosity
-epsilon = 1e-3;
-Ascale = 1e6;
+epsilon = 1e3;
+Ascale = 1;
 for i =  N_restart:-1:1
     % get the forward solutions
     u = u_mat(:,i);
@@ -60,7 +60,6 @@ for i =  N_restart:-1:1
     psi_old = psifi(1:Nx-1)*Ascale;
     phi_old = psifi(Nx:2*Nx-2);    
    
-%     phi_old(ist-2:end)=0;
     wght = -phi_old .* u.^m;
     
     figure(1)
