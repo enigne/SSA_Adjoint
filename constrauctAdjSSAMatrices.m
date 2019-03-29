@@ -71,7 +71,7 @@ bx = bxc* ones(N,1);
 % D2(N,dx)
 visco = zeros(N,1);
 for i = 1:N
-    if abs(i - glInd) < 30
+    if abs(i - glInd) < 50
         visco(i) = epsilon;
     end
 end
