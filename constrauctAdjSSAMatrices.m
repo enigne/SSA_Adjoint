@@ -78,7 +78,7 @@ end
 ArtiV = dx * visco .* D2(N,dx)  ;
 
 % construct matrix
-Heta = 1./ n .* H .* eta;
+Heta = 1./ 1 .* H .* eta;
 dHeta = Dcd(N,dx)*Heta;
 A11 = u .* Dup(N, dx, -u) + ArtiV;
 A12 = fic .* Dup(N, dx, -fic) + spvardiag(bx)*rhoig;
