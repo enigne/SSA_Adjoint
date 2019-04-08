@@ -1,9 +1,9 @@
 clear
-close all
+% close all
 %%
 addpath('SSA')
 %% Load final H and u from init file
-load('DATA/SSAinit_N800.mat')
+load('DATA/SSAinit_N1600.mat')
 %% Setup restart
 N_restart = 1;
 uObs = 1;
@@ -24,7 +24,7 @@ end
 %% For adjSSA you need the input
 rhoig = rhoi*g;
 sigma= 5e3; 
-ist = 535;
+ist = 850;
 n=3;
 
 %% Solve backward in time
@@ -62,7 +62,7 @@ for i =  N_restart:-1:1
    
     wght = -phi_old .* u.^m;
     
-    figure(1)
+    figure
     subplot(3,1,1)
     plot(xAdj, psi_old)
     ylabel('$\psi$', 'Interpreter','latex')

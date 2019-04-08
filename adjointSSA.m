@@ -49,9 +49,10 @@ u_mat = zeros(length(u), N_restart);
 gpos_vec = zeros(N_restart,1);
 psi_mat = zeros(N+1, Nist, N_restart);
 phi_mat = zeros(N+1, Nist, N_restart);
-v_mat = zeros(N+1, Nist, N_restart);
 wght_mat = zeros(N+1, Nist, N_restart);
 bwght_mat = zeros(N+1, Nist, N_restart);
+v_mat = zeros(N+1, Nist, N_restart);
+vWght_mat = zeros(N+1, Nist, N_restart);
 
 %% Solve SSA GL problem
 for i = 1: N_restart
@@ -106,6 +107,9 @@ for i =  1:Nist
         % only valid for u observation
         v = A22 \ F2;
         v_mat(1:glInd-1, i, t) = v;
+        wght = -v .* u.^m;
+        vWght_mat(1:glInd-1, i, t) = wght;
+
     end
 end
 
@@ -119,9 +123,9 @@ if saveFlag
     
     if transientFlag
         save(['DATA/SSA_Macayeal_Adjoint_N', num2str(N), '_T', num2str(N_restart), '_', obsName ,'.mat'], ...
-            'x', 'ist', 'psi_mat', 'phi_mat', 'wght_mat', 'bwght_mat', 'v_mat');
+            'x', 'ist', 'psi_mat', 'phi_mat', 'wght_mat', 'bwght_mat', 'v_mat', 'vWght_mat');
     else
         save(['DATA/SSA_Macayeal_Adjoint_N', num2str(N), '_',obsName , '.mat'], ...
-            'x', 'ist', 'psi_mat', 'phi_mat', 'wght_mat', 'bwght_mat', 'v_mat');
+            'x', 'ist', 'psi_mat', 'phi_mat', 'wght_mat', 'bwght_mat', 'v_mat', 'vWght_mat');
     end
 end
