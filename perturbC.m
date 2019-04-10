@@ -18,7 +18,7 @@ N_restart = 1000;
 H_mat = zeros(length(H), N_restart);
 u_mat = zeros(length(u), N_restart);
 gpos_vec = zeros(1, N_restart);
-dt_pert = 1;
+dt_pert = 0.1;
 u_ref= u;
 H_ref = H;
 %% Solve SSA GL problem

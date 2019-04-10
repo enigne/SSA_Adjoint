@@ -24,7 +24,7 @@ end
 %% For adjSSA you need the input
 rhoig = rhoi*g;
 sigma= 5e3; 
-ist = 535;
+ist = 900;
 n=3;
 
 %% Solve backward in time

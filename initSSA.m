@@ -12,8 +12,8 @@ x = linspace(-dx,L,Nx)';
 
 %%
 b =  -(-720 +778.5*(x/7.5e5));
-dt = 1;
-T = 30000;
+dt = 0.5;
+T = 60000;
 
 %% symmetric ice divide (extra grid point)
 b(1)=b(3);
@@ -32,7 +32,8 @@ m = 1./3.; % basal sliding exponent
 C = 7.624e6; % basal friction coefficient
 as = 0.3;
 rhog = rhow * g;
-A = 4.6416e-25; % Pa s^-1
+% A = 4.6416e-25; % Pa s^-1
+A = 1.38e-24; % Pa s^-1
 
 %% Unit convertion
 C = (C/(secperyear^m))*ones(size(x));
