@@ -3,7 +3,7 @@ close all
 %%
 addpath('SSA')
 %% Load final H and u from init file
-load('DATA/SSAinit_N800.mat')
+load('DATA/SSAinit_N1600.mat')
 %% Setup restart
 N_restart = 1;
 uObs = 1;

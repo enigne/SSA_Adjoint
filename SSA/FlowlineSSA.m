@@ -24,7 +24,7 @@ bstag=zeros(N,1);
 sea_level=0; % height of eustatic sea level
 
 % time stepping
-time_lapse = round(T/dt)+1;
+time_lapse = ceil(T/dt);
 
 for time_count = 1:time_lapse    
     % floating condition for ice sheet geometry determination
