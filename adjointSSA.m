@@ -5,7 +5,8 @@
 %   'transientFlag'     - 1: trasient adjoint, 0: steady state;
 %   'uObs'              - Flag to take observation on u;
 %   'HObs'              - Flag to take observation on H;
-%   'sigma'          	- width of the observation function F, it is 
+%   'MacayealFalg'      - To use MacAyeal's formulation of the adjoint SSA
+%   'sigma'          	- width of the observation function F, it is
 %                           automaticaly scaled to such that the area is 1;
 %   'epsilon'          	- Artificial viscosity for the right boundary close
 %                           to grounding line;
@@ -15,21 +16,24 @@
 % Author: Cheng Gong
 % Date: 2019-03-27
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function adjointSSA(N, transientFlag, uObs, HObs, sigma, epsilon)
-if nargin < 6
+function adjointSSA(N, transientFlag, uObs, HObs, MacayealFalg, sigma, epsilon)
+if nargin < 7
     % Artificial viscosity
     epsilon = 1e3;
-    if nargin < 5
+    if nargin < 6
         % width of the observation
         sigma= 0.5e4;
-        if nargin < 4
-            if nargin < 3
-                uObs = 1;
-                if nargin < 2
-                    transientFlag = 0;
+        if nargin < 5
+            MacayealFalg = 0;
+            if nargin < 4
+                if nargin < 3
+                    uObs = 1;
+                    if nargin < 2
+                        transientFlag = 0;
+                    end
                 end
+                HObs = 1 - uObs;
             end
-            HObs = 1 - uObs;
         end
     end
 end
@@ -51,6 +55,12 @@ psi_mat = zeros(N+1, Nist, N_restart);
 phi_mat = zeros(N+1, Nist, N_restart);
 wght_mat = zeros(N+1, Nist, N_restart);
 bwght_mat = zeros(N+1, Nist, N_restart);
+
+if MacayealFalg
+    v_mat = zeros(N+1, Nist, N_restart);
+    vWght_mat = zeros(N+1, Nist, N_restart);
+end
+
 %% Hack for m=1
 C = C.*abs(u).^(m-1);
 m = 1;
@@ -87,7 +97,7 @@ for i =  1:Nist
         
         % construct Adjoint matrices
         [A11, A12, A21, A22, F1, F2, ux, eta]=constrauctAdjSSAMatrices(...
-            Nx-1, n, ist(i), sigma, u, H, mean(bxc), A, rhoig, dx, uObs, HObs, glInd, epsilon, Cbeta, m);
+            Nx-1, n, ist(i), sigma, u, H, mean(bxc), A, rhoig, dx, uObs, HObs, glInd, epsilon, Cbeta, m, MacayealFalg);
         % Time stepping
         Q = [A11 - transientFlag*1./dt .* I,	A12;
             A21,                                A22;];
@@ -106,6 +116,14 @@ for i =  1:Nist
         phi_mat(1:glInd-1, i, t) = phi;
         wght_mat(1:glInd-1, i, t) = wght;
         bwght_mat(1:glInd-1, i, t) = bwght;
+        
+        
+        % solve steady state SSA using Macayeal's formulation
+        % only valid for u observation
+        v = A22 \ F2;
+        v_mat(1:glInd-1, i, t) = v;
+        wght = -v .* u.^m;
+        vWght_mat(1:glInd-1, i, t) = wght;
     end
 end
 
@@ -118,10 +136,22 @@ if saveFlag
     end
     
     if transientFlag
-        save(['DATA/SSAAdjoint_N', num2str(N), '_T', num2str(N_restart), '_', obsName ,'.mat'], ...
-            'x', 'ist', 'psi_mat', 'phi_mat', 'wght_mat', 'bwght_mat');
+        if MacayealFalg
+            save(['DATA/SSA_Macayeal_Adjoint_N', num2str(N), '_T', num2str(N_restart), '_', obsName ,'.mat'], ...
+                'x', 'ist', 'psi_mat', 'phi_mat', 'wght_mat', 'bwght_mat', 'v_mat', 'vWght_mat');
+            
+        else
+            save(['DATA/SSAAdjoint_N', num2str(N), '_T', num2str(N_restart), '_', obsName ,'.mat'], ...
+                'x', 'ist', 'psi_mat', 'phi_mat', 'wght_mat', 'bwght_mat');
+        end
+        
     else
-        save(['DATA/SSAAdjoint_N', num2str(N), '_',obsName , '.mat'], ...
-            'x', 'ist', 'psi_mat', 'phi_mat', 'wght_mat', 'bwght_mat');
+        if MacayealFalg
+            save(['DATA/SSA_Macayeal_Adjoint_N', num2str(N), '_',obsName , '.mat'], ...
+                'x', 'ist', 'psi_mat', 'phi_mat', 'wght_mat', 'bwght_mat', 'v_mat', 'vWght_mat');
+        else
+            save(['DATA/SSAAdjoint_N', num2str(N), '_',obsName , '.mat'], ...
+                'x', 'ist', 'psi_mat', 'phi_mat', 'wght_mat', 'bwght_mat');
+        end
     end
 end

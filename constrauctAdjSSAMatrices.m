@@ -1,5 +1,8 @@
 function [A11, A12, A21, A22, F1, F2, ux, eta, beta]=constrauctAdjSSAMatrices...
-    (N, n, ist, sigma, u, H, bxc, Afact, rhoig, dx, uObs, HObs, glInd, epsilon, Cbeta, m)
+    (N, n, ist, sigma, u, H, bxc, Afact, rhoig, dx, uObs, HObs, glInd, epsilon, Cbeta, m, MacyealFlag)
+if nargin < 17
+    MacyealFlag = 0;
+end
 % solve for the adjoint of the SSA equation
 % Input
 % N=number of inner points, boundaries at 0 and N+1
@@ -76,7 +79,11 @@ end
 ArtiV = dx * visco .* D2(N,dx)  ;
 
 % construct matrix
-Heta = 1./ n .* H .* eta;
+if MacyealFlag
+    Heta = 1./1 .* H .* eta;
+else
+    Heta = 1./ n .* H .* eta;
+end
 dHeta = Dcd(N,dx)*Heta;
 A11 = u .* Dup(N, dx, -u) + ArtiV;
 A12 = fic .* Dup(N, dx, -fic) + spvardiag(bx)*rhoig;
