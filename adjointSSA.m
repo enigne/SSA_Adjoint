@@ -51,10 +51,12 @@ psi_mat = zeros(N+1, Nist, N_restart);
 phi_mat = zeros(N+1, Nist, N_restart);
 wght_mat = zeros(N+1, Nist, N_restart);
 bwght_mat = zeros(N+1, Nist, N_restart);
-
+%% Hack for m=1
+C = C.*abs(u).^(m-1);
+m = 1;
 %% Solve SSA GL problem
 for i = 1: N_restart
-    [glInd, H, u, ~]=FlowlineSSA(H, b, x, dx, Nx, A, C, m, n, rhoi, rhow, g, as, dt, dt, u);
+    [glInd, H, u, beta]=FlowlineSSA(H, b, x, dx, Nx, A, C, m, n, rhoi, rhow, g, as, dt, dt, u);
     H_mat(:, i) = H;
     u_mat(:, i) = u;
     gpos_vec(i) = glInd;
@@ -62,6 +64,7 @@ end
 %% For adjSSA you need the input
 rhoig = rhoi*g;
 n = 3;
+
 %% Solve backward in time
 psi_old = zeros(N+1, 1);
 
@@ -79,9 +82,12 @@ for i =  1:Nist
         u = u(2:glInd);
         % H on stagger grid
         H = (H(1:glInd-1)+H(2:glInd)) * 0.5;
+        %
+        Cbeta = beta(2:glInd);
+        
         % construct Adjoint matrices
         [A11, A12, A21, A22, F1, F2, ux, eta]=constrauctAdjSSAMatrices(...
-            Nx-1, n, ist(i), sigma, u, H, mean(bxc), A, rhoig, dx, uObs, HObs, glInd, epsilon);
+            Nx-1, n, ist(i), sigma, u, H, mean(bxc), A, rhoig, dx, uObs, HObs, glInd, epsilon, Cbeta, m);
         % Time stepping
         Q = [A11 - transientFlag*1./dt .* I,	A12;
             A21,                                A22;];

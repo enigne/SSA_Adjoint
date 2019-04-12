@@ -11,6 +11,7 @@ saveFlag = 1;
 pertubation = 0.01;
 lWin = 900e3;
 rWin = 1000e3;
+C = C.*abs(u).^(m-1);
 dC = pertubation.*C.*((x>=lWin)&(x<=rWin));
 
 %% Setup restart
@@ -23,7 +24,7 @@ u_ref= u;
 H_ref = H;
 %% Solve SSA GL problem
 for i = 1: N_restart
-    [gpos, H, u, beta]=FlowlineSSA(H, b, x, dx, Nx, A, C+dC, m, n, rhoi, rhow, g, as, dt_pert, dt_pert, u);
+    [gpos, H, u, beta]=FlowlineSSA(H, b, x, dx, Nx, A, C+dC, 1, n, rhoi, rhow, g, as, dt_pert, dt_pert, u);
     H_mat(:, i) = H;
     u_mat(:, i) = u;
     gpos_vec(i) = gpos;

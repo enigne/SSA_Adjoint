@@ -1,4 +1,5 @@
-function [A11, A12, A21, A22, F1, F2, ux, eta, beta]=constrauctAdjSSAMatrices(N, n, ist, sigma, u, H, bxc, Afact, rhoig, dx, uObs, HObs, glInd, epsilon)
+function [A11, A12, A21, A22, F1, F2, ux, eta, beta]=constrauctAdjSSAMatrices...
+    (N, n, ist, sigma, u, H, bxc, Afact, rhoig, dx, uObs, HObs, glInd, epsilon, Cbeta, m)
 % solve for the adjoint of the SSA equation
 % Input
 % N=number of inner points, boundaries at 0 and N+1
@@ -17,10 +18,7 @@ function [A11, A12, A21, A22, F1, F2, ux, eta, beta]=constrauctAdjSSAMatrices(N,
 % wght weight in perturbation integral
 % A system matrix
 % fic coeff multiplying fi_x in 1st eq
-Cbeta=2.4126e4;
 Afact=2/Afact^(1/n);
-m=1/3;
-% m=1;
 mm1=m-1;
 ux=zeros(N,1);
 eta=ux;
