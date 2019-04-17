@@ -1,5 +1,5 @@
 clear
-% close all
+close all
 %%
 addpath('SSA')
 %% Load final H and u from init file
@@ -8,7 +8,7 @@ load('DATA/SSAinit_N1600.mat')
 N_restart = 1;
 uObs = 1;
 HObs = 1 - uObs;
-transientFlag = 1;
+transientFlag = 0;
 dt = 1;
 %% Initialization
 H_mat = zeros(length(H), N_restart);
@@ -26,8 +26,8 @@ for i = 1: N_restart
 end
 %% For adjSSA you need the input
 rhoig = rhoi*g;
-sigma= 5e3; 
-ist = 1000;
+sigma= 1e2; 
+ist = 900;
 n = 3;
 
 %% Solve backward in time
@@ -35,7 +35,7 @@ psi_old = zeros(N+1, 1);
 phi_old = zeros(N+1, 1);
 % Artificial viscosity
 epsilon = 1e3;
-Ascale = 1;
+Ascale = 1e0;
 for i =  N_restart:-1:1
     % get the forward solutions
     u = u_mat(:,i);
@@ -54,7 +54,7 @@ for i =  N_restart:-1:1
     
     % construct Adjoint matrices
     [A11, A12, A21, A22, F1, F2, ux, eta, bb]=constrauctAdjSSAMatrices(...
-        Nx-1,n,ist,sigma,u,H,mean(bxc),A,rhoig,dx, uObs, HObs, glInd, epsilon, Cbeta, m);
+        Nx-1,n,ist,sigma,u,H,mean(bxc),A,rhoig,dx, uObs, HObs, glInd, epsilon, Cbeta, m, 0, transientFlag);
     % Time stepping
     Q = [A11*Ascale - transientFlag*Ascale./dt .* I,	A12;
         A21*Ascale,                A22;];

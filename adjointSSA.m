@@ -22,7 +22,7 @@ if nargin < 7
     epsilon = 1e3;
     if nargin < 6
         % width of the observation
-        sigma= 0.5e4;
+        sigma= 1e2;
         if nargin < 5
             MacayealFalg = 0;
             if nargin < 4
@@ -97,7 +97,7 @@ for i =  1:Nist
         
         % construct Adjoint matrices
         [A11, A12, A21, A22, F1, F2, ux, eta]=constrauctAdjSSAMatrices(...
-            Nx-1, n, ist(i), sigma, u, H, mean(bxc), A, rhoig, dx, uObs, HObs, glInd, epsilon, Cbeta, m, MacayealFalg);
+            Nx-1, n, ist(i), sigma, u, H, mean(bxc), A, rhoig, dx, uObs, HObs, glInd, epsilon, Cbeta, m, MacayealFalg, transientFlag);
         % Time stepping
         Q = [A11 - transientFlag*1./dt .* I,	A12;
             A21,                                A22;];

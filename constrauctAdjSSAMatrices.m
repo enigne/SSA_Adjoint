@@ -1,7 +1,10 @@
 function [A11, A12, A21, A22, F1, F2, ux, eta, beta]=constrauctAdjSSAMatrices...
-    (N, n, ist, sigma, u, H, bxc, Afact, rhoig, dx, uObs, HObs, glInd, epsilon, Cbeta, m, MacyealFlag)
-if nargin < 17
-    MacyealFlag = 0;
+    (N, n, ist, sigma, u, H, bxc, Afact, rhoig, dx, uObs, HObs, glInd, epsilon, Cbeta, m, MacyealFlag, transientFlag)
+if nargin < 18
+    transientFlag = 1;
+    if nargin < 17
+        MacyealFlag = 0;
+    end
 end
 % solve for the adjoint of the SSA equation
 % Input
@@ -71,8 +74,13 @@ bx = bxc* ones(N,1);
 % epsilon
 % D2(N,dx)
 visco = zeros(N,1);
+if transientFlag
+    viscosInd = 80;
+else
+    viscosInd = 0;
+end
 for i = 1:N
-    if abs(i - glInd) < 100
+    if abs(i - glInd) < viscosInd
         visco(i) = epsilon;
     end
 end
@@ -85,8 +93,9 @@ else
     Heta = 1./ n .* H .* eta;
 end
 dHeta = Dcd(N,dx)*Heta;
-A11 = u .* Dup(N, dx, -u) + ArtiV;
-A12 = fic .* Dup(N, dx, -fic) + spvardiag(bx)*rhoig;
+A11 = u .* Dup(N, dx, u) + ArtiV;
+A12 = fic .* Dup(N, dx, fic) + spvardiag(bx)*rhoig;
+
 A21 = - H .* Dup(N, dx, H);
 A22 = Heta .* (Dp(N, dx) * Dm(N,dx)) + dHeta.* Dup(N,dx,dHeta) - m * spvardiag(beta) + ArtiV;
 F1=Fh;
