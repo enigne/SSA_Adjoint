@@ -15,11 +15,11 @@ C = C.*abs(u).^(m-1);
 dC = pertubation.*C.*((x>=lWin)&(x<=rWin));
 
 %% Setup restart
-N_restart = 1000;
+N_restart = 30000;
 H_mat = zeros(length(H), N_restart);
 u_mat = zeros(length(u), N_restart);
 gpos_vec = zeros(1, N_restart);
-dt_pert = 0.1;
+dt_pert = 0.5;
 u_ref= u;
 H_ref = H;
 %% Solve SSA GL problem

@@ -1,11 +1,11 @@
 clear
-close all
+% close all
 %%
 addpath('SSA')
 %%
 N = 1600;
 uObs = 1;
-transientFlag = 1;
+transientFlag = 0;
 N_restart = 1;
 pertubation = 0.01;
 lWin = 900;
@@ -48,7 +48,7 @@ else
 end
 
 if transientFlag
-    sol = sol_mat(:, 1);
+    sol = sol_mat(:, ceil(1/dt));
 else
     sol = sol_mat(:, end);
 end
