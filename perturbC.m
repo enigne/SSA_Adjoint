@@ -24,15 +24,23 @@ u_ref= u;
 H_ref = H;
 %% Solve SSA GL problem
 for i = 1: N_restart
-    [gpos, H, u, beta]=FlowlineSSA(H, b, x, dx, Nx, A, C+dC, 1, n, rhoi, rhow, g, as, dt_pert, dt_pert, u);
+    [gpos, H, u, beta]=FlowlineSSA(H, b, x, dx, Nx, A, C+dC, 1, n, rhoi, ...
+        rhow, g, as, dt_pert, dt_pert, u);
     H_mat(:, i) = H;
     u_mat(:, i) = u;
     gpos_vec(i) = gpos;
 end
 
-%%
+%% Plot
 plot(x, u_mat(:,end) -u_ref)
-%%
+%% Cut data
+cutInd = [1:ceil(10/dt)+1, N_restart];
+u_mat = u_mat(:,cutInd);
+H_mat = H_mat(:,cutInd);
+
+%% Save
 if saveFlag 
-    save(['DATA/SSAPerturb_N', num2str(N),'_C' , num2str(pertubation*100,'%03.f'), '_x', num2str(lWin/1000) ,'.mat'], 'x','u_mat','H_mat','u_ref','H_ref', 'dt_pert','N_restart','pertubation', 'dC');
+    save(['DATA/SSAPerturb_N', num2str(N),'_C' , num2str(pertubation*100,'%03.f'),...
+        '_x', num2str(lWin/1000) ,'.mat'], 'x','u_mat','H_mat','u_ref','H_ref',...
+        'dt_pert','N_restart','pertubation', 'dC');
 end

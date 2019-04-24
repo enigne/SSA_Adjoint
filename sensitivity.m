@@ -60,6 +60,12 @@ hold on
 plot(x(ist), sensitivityC,'ro')
 xlim([min(x), max(x)])
 %%
+du = u_mat(:, end) - u_ref;
+dH = H_mat(:, end) - H_ref;
+figure
+plot(du.*H_ref+dH.*u_ref)
+
+%%
 % tempW = wght_mat(2:540,2:540);
 % [U,S,V]=svd(tempW);
 % figure(7);
