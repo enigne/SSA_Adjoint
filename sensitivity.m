@@ -4,7 +4,7 @@ close all
 addpath('SSA')
 %%
 N = 1600;
-uObs = 1;
+uObs = 0;
 transientFlag = 0;
 N_restart = 1;
 pertubation = 0.01;
@@ -45,7 +45,7 @@ if uObs
     sol_ref = u_ref;
     sol_mat = u_mat;
 else 
-    sol_ref = H_ref-db;
+    sol_ref = H_ref - db;
     sol_mat = H_mat;
 end
 
