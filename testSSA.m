@@ -6,9 +6,9 @@ addpath('SSA')
 load('DATA/SSAinit_N1600.mat')
 %% Setup restart
 N_restart = 1;
-uObs = 1;
+uObs = 0;
 HObs = 1 - uObs;
-transientFlag = 0;
+transientFlag = 1;
 dt = 1;
 %% Initialization
 H_mat = zeros(length(H), N_restart);
@@ -66,17 +66,20 @@ for i =  N_restart:-1:1
     phi_old = psifi(Nx:2*Nx-2);    
    
     wght = -phi_old .* u.^m;
-    
+    bwght = (Dcd(Nx-1, dx)*psi_old).*u + 2*(Dcd(Nx-1,dx)* phi_old) .*eta .* ux+ rhoig*phi_old.*(Dcd(Nx-1,dx)*H + bxc(1:Nx-1));
+        
     figure(1)
-    subplot(3,1,1)
+    subplot(4,1,1)
     plot(xAdj, psi_old)
     ylabel('$\psi$', 'Interpreter','latex')
-    subplot(3,1,2)
+    subplot(4,1,2)
     plot(xAdj, phi_old)
     ylabel('$\phi$', 'Interpreter','latex')
-    subplot(3,1,3)
+    subplot(4,1,3)
     plot(xAdj, wght)
     ylabel('$\delta\beta$', 'Interpreter','latex')
+    subplot(4,1,4)
+    plot(xAdj, bwght )
 end
 
 %%
@@ -84,16 +87,20 @@ pert = sum(wght.*C(1:glInd-1)*0.01)*dx;
 
 %%
 
-t1 = Dcd(Nx-1,dx)*(1./n.*H.*eta.* (Dcd(Nx-1,dx)*phi_old));
-t2 =-m*bb.*phi_old;
-t3 = -H.*(Dcd(Nx-1,dx)*psi_old);
-% figure
-% subplot(3,1,1)
-% plot(t1)
-% subplot(3,1,2)
-% plot(t2)
-% subplot(3,1,3)
-% plot(t3)
-%%
+t1 = (Dcd(Nx-1, dx)*psi_old).*u;
+t2 = 2*(Dcd(Nx-1,dx)* phi_old) .*eta .* ux;
+t3 = rhoig*phi_old.*(Dcd(Nx-1,dx)*H + bxc(1:Nx-1));
 figure
-plot(t1+t2+t3)
+subplot(3,1,1)
+plot(t1)
+subplot(3,1,2)
+plot(t2)
+subplot(3,1,3)
+plot(t3)
+%%
+
+% t1 = Dcd(Nx-1,dx)*(1./n.*H.*eta.* (Dcd(Nx-1,dx)*phi_old));
+% t2 =-m*bb.*phi_old;
+% t3 = -H.*(Dcd(Nx-1,dx)*psi_old);
+% figure
+% plot(t1+t2+t3)
