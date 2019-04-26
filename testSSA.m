@@ -1,14 +1,14 @@
 clear
-close all
+% close all
 %%
 addpath('SSA')
 %% Load final H and u from init file
 load('DATA/SSAinit_N1600.mat')
 %% Setup restart
 N_restart = 1;
-uObs = 0;
+uObs = 1;
 HObs = 1 - uObs;
-transientFlag = 1;
+transientFlag = 0;
 dt = 1;
 %% Initialization
 H_mat = zeros(length(H), N_restart);
@@ -27,7 +27,7 @@ end
 %% For adjSSA you need the input
 rhoig = rhoi*g;
 sigma= 1e2; 
-ist = 900;
+ist = 950;
 n = 3;
 
 %% Solve backward in time
@@ -66,9 +66,9 @@ for i =  N_restart:-1:1
     phi_old = psifi(Nx:2*Nx-2);    
    
     wght = -phi_old .* u.^m;
-    bwght = (Dcd(Nx-1, dx)*psi_old).*u + 2*(Dcd(Nx-1,dx)* phi_old) .*eta .* ux+ rhoig*phi_old.*(Dcd(Nx-1,dx)*H + bxc(1:Nx-1));
+    bwght = (Dcd(Nx-1, dx)*psi_old).*u + (Dcd(Nx-1,dx)* phi_old) .*eta .* ux+ rhoig*phi_old.*(Dcd(Nx-1,dx)*H + bxc(1:Nx-1));
         
-    figure(1)
+    figure
     subplot(4,1,1)
     plot(xAdj, psi_old)
     ylabel('$\psi$', 'Interpreter','latex')
@@ -87,8 +87,8 @@ pert = sum(wght.*C(1:glInd-1)*0.01)*dx;
 
 %%
 
-t1 = (Dcd(Nx-1, dx)*psi_old).*u;
-t2 = 2*(Dcd(Nx-1,dx)* phi_old) .*eta .* ux;
+t1 = (Dcd(Nx-1, dx)* psi_old) .*u;
+t2 = (Dcd(Nx-1, dx)* phi_old) .*eta .* ux;
 t3 = rhoig*phi_old.*(Dcd(Nx-1,dx)*H + bxc(1:Nx-1));
 figure
 subplot(3,1,1)

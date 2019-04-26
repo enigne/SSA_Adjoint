@@ -2,7 +2,7 @@ clear
 close all
 %%
 Ns = [1600];
-transientFlags = [0];
+transientFlags = [0, 1];
 uObs = [0, 1];
 MacayealFlag = 0;
 
