@@ -110,7 +110,7 @@ for i =  1:Nist
         
         % sensitivity
         wght = -phi .* u.^m;
-        bwght = (Dcd(Nx-1, dx)*psi).*u + (Dcd(Nx-1,dx)* phi) .*eta .* ux+ rhoig*phi.*(Dcd(Nx-1,dx)*H + bxc(1:Nx-1));
+        bwght = (Dm(Nx-1, dx)*psi).*u + (Dm(Nx-1,dx)* phi) .*eta .* ux+ rhoig*phi.*(Dm(Nx-1,dx)*H + bxc(1:Nx-1));
         
         psi_mat(1:glInd-1, i, t) = psi;
         phi_mat(1:glInd-1, i, t) = phi;

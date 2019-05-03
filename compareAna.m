@@ -9,9 +9,9 @@ load('DATA/SSAinit_N1600.mat')
 C = beta;
 m = 1;
 %% Compute analytical solutions
-saveFlag = 1;
+saveFlag = 0;
 iGL = GLpos;
-slicePos = 900;
+slicePos = 700;
 % [u_ana,H_ana,beta_ana,x_ana,phi_ana,psi_ana,wght_ana,bwght_ana,dudC]=...
 %     Hum(N,L,H(2),H(iGL+1),iGL,slicePos,C,rhog,as,1.00, m);
 
@@ -28,12 +28,14 @@ plot(x, H)
 hold on
 plot(x_ana, H_ana)
 figure
-subplot(3,1,1)
+subplot(4,1,1)
 plot(x_ana, psi_ana)
-subplot(3,1,2)
+subplot(4,1,2)
 plot(x_ana, phi_ana)
-subplot(3,1,3)
+subplot(4,1,3)
 plot(x_ana,wght_ana) 
+subplot(4,1,4)
+plot(x_ana,bwght_ana) 
 %% save
 if saveFlag
     save(['DATA/SSAAnalytical_N', num2str(N), '.mat'], ...

@@ -33,5 +33,9 @@ v(mask) = 0;
 wght =- v .* u.^m;
 
 %% b weights
-bwght = (m+1)*C*a*xst.*(a*x).^m./(rhog*Hst^(m+3).*H);
+% bwght = (m+1)*C*a*xst.*(a*x).^m./(rhog*Hst^(m+3).*H);
+Hx = -C.*a.^m/rhog.*x.^m./H.^(m+1);
+psix = -C.*m.*u.^(m-1).*v./H;
+psix(ist+1) = 1/Hst/1e3;
+bwght = psix.*u+v.*rhog.*Hx;
 
