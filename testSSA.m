@@ -6,7 +6,7 @@ addpath('SSA')
 load('DATA/SSAinit_N1600.mat')
 %% Setup restart
 N_restart = 1;
-uObs = 1;
+uObs = 0;
 HObs = 1 - uObs;
 transientFlag = 0;
 dt = 1;
@@ -88,19 +88,60 @@ pert = sum(wght.*C(1:glInd-1)*0.01)*dx;
 %%
 
 t1 = (Dp(Nx-1, dx)* psi_old) .*u;
-t2 = (Dp(Nx-1, dx)* phi_old) .*eta .* ux;
-t3 = rhoig*phi_old.*(Dp(Nx-1,dx)*H + bxc(1:Nx-1));
+t2 = (Dp(Nx-1, dx)* phi_old) .*(eta .* ux) ;
+t3 = (Dp(Nx-1, dx)* phi_old) .*(-rhog*H);
+t4 = rhoig*phi_old.*(bxc(1:Nx-1));
+figure
+range1 = [-0.8e-7,0.8e-7];
+% range1 = [-0.2e-5,0.2e-5];
+subplot(4,1,1)
+plot(t1)
+ylim(range1)
+subplot(4,1,2)
+plot(t2)
+ylim(range1)
+subplot(4,1,3)
+plot(t3)
+ylim(range1)
+subplot(4,1,4)
+plot(t4)
+ylim(range1)
+%% b weights
+% 
+% t1 = (Dp(Nx-1, dx)* psi_old) .*u;
+% t2 = (Dp(Nx-1, dx)* phi_old) .*eta .* ux;
+% t3 = rhoig*phi_old.*(Dp(Nx-1,dx)*H + bxc(1:Nx-1));
+% figure
+% subplot(3,1,1)
+% plot(t1)
+% subplot(3,1,2)
+% plot(t2)
+% subplot(3,1,3)
+% plot(t3)
+%%
+% range2 = [-0.5e-4,0.5e-4];
+range2 = [-2e-6,2e-6];
+
+t1 = Dp(Nx-1,dx)*(1./n.*H.*eta.* (Dm(Nx-1,dx)*phi_old));
+t2 =-m*bb.*phi_old;
+t3 = -H.*(Dp(Nx-1,dx)*psi_old);
 figure
 subplot(3,1,1)
 plot(t1)
+ylim(range2)
 subplot(3,1,2)
 plot(t2)
+ylim(range2)
 subplot(3,1,3)
 plot(t3)
-%%
+ylim(range2)
 
-% t1 = Dcd(Nx-1,dx)*(1./n.*H.*eta.* (Dcd(Nx-1,dx)*phi_old));
-% t2 =-m*bb.*phi_old;
-% t3 = -H.*(Dcd(Nx-1,dx)*psi_old);
-% figure
-% plot(t1+t2+t3)
+%%
+figure
+% plot(u./eta./H.*(Dp(Nx-1,dx)*(eta.*H) ))
+hold on
+% plot(eta.*ux)
+% plot(-rhog.*H)
+% hold on
+plot(1./(-rhog.*H))
+plot(phi_old)
