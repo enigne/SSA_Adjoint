@@ -1,5 +1,5 @@
 clear
-% close all
+close all
 %%
 addpath('SSA')
 %% Load final H and u from init file
@@ -12,11 +12,17 @@ m = 1;
 saveFlag = 1;
 iGL = GLpos;
 slicePos = 700;
-% [u_ana,H_ana,beta_ana,x_ana,phi_ana,psi_ana,wght_ana,bwght_ana,dudC]=...
-%     Hum(N,L,H(2),H(iGL+1),iGL,slicePos,C,rhog,as,1.00, m);
 
 [x_ana, H_ana, u_ana, psi_ana, phi_ana, wght_ana, bwght_ana, psi_ana_h, phi_ana_h, wght_ana_h, bwght_ana_h] = ...
     analyticalSSA(H(2), H(iGL+1), m, C(2:end-1), as, rhog, x(2:end-1), iGL, slicePos);
+%% scale to MPa unit
+phi_ana = 1e6*phi_ana;
+wght_ana = 1e6*wght_ana;
+bwght_ana = 1e6*bwght_ana;
+phi_ana_h = 1e6*phi_ana_h;
+wght_ana_h = 1e6*wght_ana_h;
+bwght_ana_h = 1e6*bwght_ana_h;
+
 %% plot
 figure
 subplot(2,1,1)
