@@ -11,14 +11,14 @@ saveFlag = 1;
 pertubation = 0.01;
 lWin = 900e3;
 rWin = 1000e3;
-C = C.*abs(u).^(m-1);
+% C = C.*abs(u).^(m-1);
 dC = pertubation.*C.*((x>=lWin)&(x<=rWin));
 
 %% Pertubation in time
 N_restart = 300;
 dt_pert = 0.05;
 sInd = [0: (N_restart-1)];
-seasonType = 1;
+seasonType = 0;
 
 if seasonType == 0
     % sine [-1,1]
@@ -38,7 +38,7 @@ H_ref = H;
 %% Solve SSA GL problem
 for i = 1: N_restart
     % Seasonal variation
-    [gpos, H, u, beta]=FlowlineSSA(H, b, x, dx, Nx, A, C+dC*season(i), 1, n, rhoi, ...
+    [gpos, H, u, beta]=FlowlineSSA(H, b, x, dx, Nx, A, C+dC*season(i), m, n, rhoi, ...
         rhow, g, as, dt_pert, dt_pert, u);
     H_mat(:, i) = H;
     u_mat(:, i) = u;
