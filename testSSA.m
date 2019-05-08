@@ -66,7 +66,8 @@ for i =  N_restart:-1:1
     phi_old = psifi(Nx:2*Nx-2);    
    
     wght = -phi_old .* u.^m;
-    bwght = (Dm(Nx-1, dx)*psi_old).*u + (Dm(Nx-1,dx)* phi_old) .*eta .* ux+ rhoig*phi_old.*(Dm(Nx-1,dx)*H + bxc(1:Nx-1));
+%     bwght = (Dcd(Nx-1, dx)*psi_old).*u + (Dm(Nx-1,dx)* phi_old) .*eta .* ux+ rhoig*phi_old.*(Dm(Nx-1,dx)*H + bxc(1:Nx-1));
+    bwght = rhoig*(H.*(Dm(Nx-1,dx)*phi_old) + phi_old.*(Dm(Nx-1,dx)*H + bxc(1:Nx-1))) +F1;
         
     figure
     subplot(4,1,1)
@@ -87,25 +88,25 @@ pert = sum(wght.*C(1:glInd-1)*0.01)*dx;
 
 %%
 
-t1 = (Dp(Nx-1, dx)* psi_old) .*u;
-t2 = (Dp(Nx-1, dx)* phi_old) .*(eta .* ux) ;
-t3 = (Dp(Nx-1, dx)* phi_old) .*(-rhog*H);
-t4 = rhoig*phi_old.*(bxc(1:Nx-1));
+t1 = rhoig*(H.*(Dm(Nx-1,dx)*phi_old));
+t2 = rhoig* phi_old.*(Dm(Nx-1,dx)*H + bxc(1:Nx-1)) ;
+t3 = F1;
+% t4 = rhoig*phi_old.*(bxc(1:Nx-1));
 figure
-range1 = [-0.8e-7,0.8e-7];
+% range1 = [-0.8e-7,0.8e-7];
 % range1 = [-0.2e-5,0.2e-5];
-subplot(4,1,1)
+subplot(3,1,1)
 plot(t1)
-ylim(range1)
-subplot(4,1,2)
+% ylim(range1)
+subplot(3,1,2)
 plot(t2)
-ylim(range1)
-subplot(4,1,3)
+% ylim(range1)
+subplot(3,1,3)
 plot(t3)
-ylim(range1)
-subplot(4,1,4)
-plot(t4)
-ylim(range1)
+% ylim(range1)
+% subplot(4,1,4)
+% plot(t4)
+% ylim(range1)
 %% b weights
 % 
 % t1 = (Dp(Nx-1, dx)* psi_old) .*u;
@@ -120,28 +121,28 @@ ylim(range1)
 % plot(t3)
 %%
 % range2 = [-0.5e-4,0.5e-4];
-range2 = [-2e-6,2e-6];
-
-t1 = Dp(Nx-1,dx)*(1./n.*H.*eta.* (Dm(Nx-1,dx)*phi_old));
-t2 =-m*bb.*phi_old;
-t3 = -H.*(Dp(Nx-1,dx)*psi_old);
-figure
-subplot(3,1,1)
-plot(t1)
-ylim(range2)
-subplot(3,1,2)
-plot(t2)
-ylim(range2)
-subplot(3,1,3)
-plot(t3)
-ylim(range2)
-
-%%
-figure
-% plot(u./eta./H.*(Dp(Nx-1,dx)*(eta.*H) ))
-hold on
-% plot(eta.*ux)
-% plot(-rhog.*H)
+% range2 = [-2e-6,2e-6];
+% 
+% t1 = Dp(Nx-1,dx)*(1./n.*H.*eta.* (Dm(Nx-1,dx)*phi_old));
+% t2 =-m*bb.*phi_old;
+% t3 = -H.*(Dp(Nx-1,dx)*psi_old);
+% figure
+% subplot(3,1,1)
+% plot(t1)
+% ylim(range2)
+% subplot(3,1,2)
+% plot(t2)
+% ylim(range2)
+% subplot(3,1,3)
+% plot(t3)
+% ylim(range2)
+% 
+% %%
+% figure
+% % plot(u./eta./H.*(Dp(Nx-1,dx)*(eta.*H) ))
 % hold on
-plot(1./(-rhog.*H))
-plot(phi_old)
+% % plot(eta.*ux)
+% % plot(-rhog.*H)
+% % hold on
+% plot(1./(-rhog.*H))
+% plot(phi_old)
