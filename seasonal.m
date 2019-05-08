@@ -11,7 +11,7 @@ saveFlag = 1;
 pertubation = 0.01;
 lWin = 900e3;
 rWin = 1000e3;
-C = C.*abs(u).^(m-1);
+% C = C.*abs(u).^(m-1);
 dC = pertubation.*C.*((x>=lWin)&(x<=rWin));
 
 %% Pertubation in time
@@ -23,6 +23,9 @@ seasonType = 1;
 if seasonType == 0
     % sine [-1,1]
     season = sin(sInd*dt_pert*2*pi);
+elseif seasonType == 1
+    % cosine [-1,1]
+    season = cos(sInd*dt_pert*2*pi);
 else
     % square [0, 1]
     season = (sin(sInd*dt_pert*2*pi) > 0)*2-1;
@@ -38,7 +41,7 @@ H_ref = H;
 %% Solve SSA GL problem
 for i = 1: N_restart
     % Seasonal variation
-    [gpos, H, u, beta]=FlowlineSSA(H, b, x, dx, Nx, A, C+dC*season(i), 1, n, rhoi, ...
+    [gpos, H, u, beta]=FlowlineSSA(H, b, x, dx, Nx, A, C+dC*season(i), m, n, rhoi, ...
         rhow, g, as, dt_pert, dt_pert, u);
     H_mat(:, i) = H;
     u_mat(:, i) = u;
@@ -49,6 +52,8 @@ end
 if saveFlag
     if seasonType == 0
         seasonName = 'sine';
+    elseif seasonType == 1
+        seasonName = 'cosine';
     else
         seasonName = 'square';
     end
