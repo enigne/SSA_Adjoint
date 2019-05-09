@@ -21,6 +21,7 @@ mask = maskST | maskGL;
 
 % 
 integrant = C.*x.^(m-1).*GLmask;
+integrant(1) = 0;
 psifact =  trapz(x, integrant) - cumtrapz(x, integrant);
 
 %% v
@@ -40,7 +41,7 @@ wght_u =- v_u .* u.^m;
 Hx = -C.*a.^m/rhog.*x.^m./H.^(m+1);
 vx = m*Cv.*H.^(m-1).*Hx;
 vx(maskST) = 0;
-vx(ist+1) = u(ist)/rhog/Hst^2/dx;
+% vx(ist+1) = u(ist)/rhog/Hst^2/dx;
 bwght_u = rhog*(vx.*H + Hx.*v_u);
 %% for h-response
 %% v
@@ -60,6 +61,6 @@ wght_h =- v_h .* u.^m;
 Hx = -C.*a.^m/rhog.*x.^m./H.^(m+1);
 vx_h = m*Cv_h.*H.^(m-1).*Hx;
 vx_h(maskST) = 0;
-vx_h(ist+1) = -1./rhog/Hst/dx;
+% vx_h(ist+1) = -1./rhog/Hst/dx;
 bwght_h = rhog*(vx_h.*H + Hx.*v_h);
-bwght_h(ist+1) = bwght_h(ist+1) + 1/dx;
+% bwght_h(ist+1) = bwght_h(ist+1) + 1/dx;
