@@ -11,17 +11,17 @@ m = 1;
 %% Compute analytical solutions
 saveFlag = 1;
 iGL = GLpos;
-slicePos = 700;
+slicePos = 900;
 
 [x_ana, H_ana, u_ana, psi_ana, phi_ana, wght_ana, bwght_ana, psi_ana_h, phi_ana_h, wght_ana_h, bwght_ana_h] = ...
     analyticalSSA(H(2), H(iGL+1), m, C(2:end-1), as, rhog, x(2:end-1), iGL, slicePos);
 %% scale to MPa unit
-phi_ana = 1e6*phi_ana;
-wght_ana = 1e6*wght_ana;
-bwght_ana = 1e6*bwght_ana;
-phi_ana_h = 1e6*phi_ana_h;
-wght_ana_h = 1e6*wght_ana_h;
-bwght_ana_h = 1e6*bwght_ana_h;
+% phi_ana = phi_ana;
+% wght_ana = wght_ana;
+% bwght_ana = bwght_ana;
+% phi_ana_h = phi_ana_h;
+% wght_ana_h = wght_ana_h;
+% bwght_ana_h = bwght_ana_h;
 
 %% plot
 figure

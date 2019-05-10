@@ -25,55 +25,14 @@ for i = 1:length(slicePos)
 
     %% scale to MPa unit
     psi_a_mat(:,i*2-1) = psi_ana;
-    phi_a_mat(:,i*2-1) = 1e6*phi_ana;
-    wght_a_mat(:,i*2-1) = 1e6*wght_ana;
-    bwght_a_mat(:,i*2-1) = 1e6*bwght_ana;
+    phi_a_mat(:,i*2-1) = phi_ana;
+    wght_a_mat(:,i*2-1) = wght_ana;
+    bwght_a_mat(:,i*2-1) = bwght_ana;
 
     psi_a_mat(:,i*2) = psi_ana_h;
-    phi_a_mat(:,i*2) = 1e6*phi_ana_h;
-    wght_a_mat(:,i*2) = 1e6*wght_ana_h;
-    bwght_a_mat(:,i*2) = 1e6*bwght_ana_h;
-    
-    %% plot
-%     figure(1)
-%     subplot(1, 2, 1)
-%     plot(x_ana, psi_ana)
-%     hold on
-%     xlim([0,1.04e6])    
-%     subplot(2, 1, 2)
-%     plot(x_ana,psi_ana_h) 
-%     hold on
-%     xlim([0,1.04e6])    
-%     
-%     figure(2)
-%     subplot(2, 1, 1)
-%     plot(x_ana, phi_ana)
-%     hold on
-%     xlim([0,1.04e6])    
-%     subplot(2, 1, 2)
-%     plot(x_ana,phi_ana_h) 
-%     hold on
-%     xlim([0,1.04e6])    
-% 
-%     figure(3)
-%     subplot(2, 1, 1)
-%     plot(x_ana, wght_ana)
-%     hold on
-%     xlim([0,1.04e6])    
-%     subplot(2, 1, 2)
-%     plot(x_ana,wght_ana_h) 
-%     hold on
-%     xlim([0,1.04e6])    
-% 
-%     figure(4)
-%     subplot(2, 1, 1)
-%     plot(x_ana, bwght_ana)
-%     hold on
-%     xlim([0,1.04e6])    
-%     subplot(2, 1, 2)
-%     plot(x_ana,bwght_ana_h) 
-%     hold on
-%     xlim([0,1.04e6])    
+    phi_a_mat(:,i*2) = phi_ana_h;
+    wght_a_mat(:,i*2) = wght_ana_h;
+    bwght_a_mat(:,i*2) = bwght_ana_h;
 
 end
 

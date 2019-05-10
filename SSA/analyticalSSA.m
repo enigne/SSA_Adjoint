@@ -41,7 +41,7 @@ wght_u =- v_u .* u.^m;
 Hx = -C.*a.^m/rhog.*x.^m./H.^(m+1);
 vx = m*Cv.*H.^(m-1).*Hx;
 vx(maskST) = 0;
-% vx(ist+1) = u(ist)/rhog/Hst^2/dx;
+vx(ist+1) = u(ist)/rhog/Hst^2/dx;
 bwght_u = rhog*(vx.*H + Hx.*v_u);
 %% for h-response
 %% v
