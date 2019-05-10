@@ -1,4 +1,4 @@
-function [x, H, u, psi_u, v_u, wght_u, bwght_u, psi_h, v_h, wght_h, bwght_h] = analyticalSSA(H0, HGL, m, C, a, rhog, x, iGL, ist)
+function [x, H, u, psi_u, v_u, wght_u, bwght_u, psi_h, v_h, wght_h, bwght_h] = analyticalSSA(H0, HGL, m, C, a, rhog, x, iGL, ist, A, n)
 %% prepare for \int_x^x* Cx^{m-1} dx
 xGL = x(iGL+1);
 GLmask = (x < xGL);
@@ -53,7 +53,9 @@ v_h(mask) = 0;
 psi_h =  Cv_h .* m .* a^(m-1) .* psifact;
 psi_h(maskST) = psi_h(ist+1);
 psi_h(maskGL) = 0;
-
+% correction at ist for psi
+eta_ist = 2 *A^(-1/n)*(a*(Hst-xst*Hx(ist+1))/Hst^2)^((1-n)/n);
+psi_h(ist+1) = psi_h(ist+1) - eta_ist/n/rhog/Hst/dx;
 %% C weights
 wght_h =- v_h .* u.^m;
 

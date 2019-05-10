@@ -21,7 +21,7 @@ bwght_a_mat = zeros(N, length(slicePos)*2);
 %%
 for i = 1:length(slicePos)
     [x_ana, H_ana, u_ana, psi_ana, phi_ana, wght_ana, bwght_ana, psi_ana_h, phi_ana_h, wght_ana_h, bwght_ana_h] = ...
-        analyticalSSA(H(2), H(iGL+1), m, C(2:end-1), as, rhog, x(2:end-1), iGL, slicePos(i));
+        analyticalSSA(H(2), H(iGL+1), m, C(2:end-1), as, rhog, x(2:end-1), iGL, slicePos(i), A, n);
 
     %% scale to MPa unit
     psi_a_mat(:,i*2-1) = psi_ana;
