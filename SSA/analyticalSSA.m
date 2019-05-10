@@ -5,6 +5,7 @@ GLmask = (x < xGL);
 integrant = C.*x.^m .* GLmask;
 Hfact = trapz(x, integrant) - cumtrapz(x, integrant);
 dx = abs(x(2) - x(1));
+dx = 1;
 
 %% Compute for H
 H =  (HGL^(m+2)  + (m+2)*a^m/rhog * Hfact).^(1/(m+2));
@@ -65,4 +66,7 @@ vx_h = m*Cv_h.*H.^(m-1).*Hx;
 vx_h(maskST) = 0;
 % vx_h(ist+1) = -1./rhog/Hst/dx;
 bwght_h = rhog*(vx_h.*H + Hx.*v_h);
-% bwght_h(ist+1) = bwght_h(ist+1) + 1/dx;
+%
+delta = eta_ist/n/rhog/Hst*u(ist+1);
+bwght_h(ist) = bwght_h(ist) - delta/dx/dx;
+bwght_h(ist+2) = bwght_h(ist+2) + delta/dx/dx;
