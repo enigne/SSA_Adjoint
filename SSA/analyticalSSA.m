@@ -5,7 +5,7 @@ GLmask = (x < xGL);
 integrant = C.*x.^m .* GLmask;
 Hfact = trapz(x, integrant) - cumtrapz(x, integrant);
 dx = abs(x(2) - x(1));
-dx = 1;
+% dx = 1;
 
 %% Compute for H
 H =  (HGL^(m+2)  + (m+2)*a^m/rhog * Hfact).^(1/(m+2));

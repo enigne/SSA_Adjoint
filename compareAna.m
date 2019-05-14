@@ -11,7 +11,7 @@ m = 1;
 %% Compute analytical solutions
 saveFlag = 1;
 iGL = GLpos;
-slicePos = 900;
+slicePos = 700;
 
 [x_ana, H_ana, u_ana, psi_ana, phi_ana, wght_ana, bwght_ana, psi_ana_h, phi_ana_h, wght_ana_h, bwght_ana_h] = ...
     analyticalSSA(H(2), H(iGL+1), m, C(2:end-1), as, rhog, x(2:end-1), iGL, slicePos, A, n);
