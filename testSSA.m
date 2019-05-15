@@ -26,7 +26,7 @@ for i = 1: N_restart
 end
 %% For adjSSA you need the input
 rhoig = rhoi*g;
-sigma= 1e1; 
+sigma= 1e2; 
 ist = 700;
 n = 3;
 
@@ -66,8 +66,8 @@ for i =  N_restart:-1:1
     phi_old = psifi(Nx:2*Nx-2);    
    
     wght = -phi_old .* u.^m;
-%     bwght = (Dcd(Nx-1, dx)*psi_old).*u + (Dm(Nx-1,dx)* phi_old) .*eta .* ux+ rhoig*phi_old.*(Dm(Nx-1,dx)*H + bxc(1:Nx-1));
-    bwght = rhoig*(H.*(Dm(Nx-1,dx)*phi_old) + phi_old.*(Dm(Nx-1,dx)*H + bxc(1:Nx-1))) +F1;
+    bwght = (Dm(Nx-1, dx)*psi_old).*u + (Dm(Nx-1,dx)* phi_old) .*eta .* ux+ rhoig*phi_old.*(Dm(Nx-1,dx)*H + bxc(1:Nx-1));
+%     bwght = rhoig*(H.*(Dm(Nx-1,dx)*phi_old) + phi_old.*(Dm(Nx-1,dx)*H + bxc(1:Nx-1))) +F1;
         
     figure
     subplot(4,1,1)
