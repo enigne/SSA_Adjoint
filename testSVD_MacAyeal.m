@@ -17,8 +17,8 @@ wuc_dcouple = vWght_mat(u_range, C_range);
 load('DATA/SSA_Macayeal_Adjoint_N1600_H.mat')
 whc = wght_mat(h_range, C_range);
 
-W_mat = {wuc, whc, wuc_dcouple};
-nameList = {'uC', 'hC', '{uC}_{dc}'};
+W_mat = {wuc,  wuc_dcouple};
+nameList = {'\widetilde{\mathbf{\Sigma}}_{uC}', '\widehat{\mathbf{\Sigma}}_{uC}'};
 
 
 %% SVD
