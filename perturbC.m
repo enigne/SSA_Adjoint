@@ -34,6 +34,8 @@ end
 %% Setup restart
 H_mat = zeros(length(H), N_restart);
 u_mat = zeros(length(u), N_restart);
+beta_mat = zeros(length(C), N_restart);
+
 gpos_vec = zeros(1, N_restart);
 u_ref= u;
 H_ref = H;
@@ -43,6 +45,7 @@ for i = 1: N_restart
         rhow, g, as, dt_pert, dt_pert, u);
     H_mat(:, i) = H;
     u_mat(:, i) = u;
+    beta_mat(:, i) = beta;
     gpos_vec(i) = gpos;
 end
 
@@ -59,9 +62,13 @@ subplot(2, 1, 2)
 contour(Xm, Tm, H_diff', 100)
 colorbar
 
+
 %%
+beta_diff = beta_mat - beta_mat(:, 1);
 figure
-plot(x, u_mat(:,end) -u_ref)
+contour(Xm, Tm, beta_diff', 100)
+
+% plot(x, u_mat(:,end) -u_ref)
 
 %% Cut data
 % cutInd = [1:ceil(10/dt)+1, N_restart];
@@ -71,6 +78,6 @@ plot(x, u_mat(:,end) -u_ref)
 %% Save
 if saveFlag 
     save(['DATA/SSAPerturb_N', num2str(N),'_C' , num2str(pertubation*100,'%03.f'),...
-        '_x', num2str(lWin/1000) ,'.mat'], 'x','u_mat','H_mat','u_ref','H_ref',...
+        '_x', num2str(lWin/1000) ,'.mat'], 'x','u_mat','H_mat','beta_mat', 'u_ref','H_ref',...
         'dt_pert','N_restart','pertubation', 'dC', 'season');
 end
