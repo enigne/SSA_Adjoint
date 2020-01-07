@@ -4,7 +4,7 @@ close all
 addpath('SSA')
 saveFlag = 1;
 %%
-N = 1600;
+N = 800;
 Nx = N + 2;
 L = 16e5;
 dx = L/(N);
