@@ -1,4 +1,4 @@
-function [x, H, u, psi_u, v_u, wght_u, bwght_u, psi_h, v_h, wght_h, bwght_h] = analyticalSSA(H0, HGL, m, C, a, rhog, x, iGL, ist, A, n)
+function [x, H, u, psi_u, v_u, wght_u, bwght_u, psi_h, v_h, wght_h, bwght_h] = analyticalSSA(Hcf, HGL, m, C, a, rhog, x, iGL, ist, A, n, rhow, rhoi)
 %% prepare for \int_x^x* Cx^{m-1} dx
 xGL = x(iGL+1);
 GLmask = (x < xGL);
@@ -17,10 +17,19 @@ u = a*x./H;
 xst = x(ist+1);
 Hst = H(ist+1);
 maskST = (x < xst);
-maskGL = (x > xGL);
+maskGL = (x >= xGL);
 mask = maskST | maskGL;
 
-% 
+%% add floating and calving conditions
+HGL = HGL *0.8;
+H(maskGL) = HGL + (Hcf - HGL)/(x(end)-xGL)*(x(maskGL)-xGL);
+% u(maskGL) = u(iGL+1) + A*(rhog/4*(1-rhoi/rhow))^n * (1/(n+1)*(x(end)-xGL)/(Hcf-HGL))*...
+%         ((HGL+(Hcf - HGL)/(x(end)-xGL)*(x(maskGL)-xGL)).^(n+1) - HGL^(n+1));
+
+% H(maskGL) = Hcf(maskGL);
+u(maskGL) = A*(rhog/4*(1-rhoi/rhow))^n * cumtrapz(x(maskGL),H(maskGL).^n)+u(iGL+1);
+
+%% 
 integrant = C.*x.^(m-1).*GLmask;
 integrant(1) = 0;
 psifact =  trapz(x, integrant) - cumtrapz(x, integrant);
