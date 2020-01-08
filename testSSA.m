@@ -1,5 +1,5 @@
 clear
-close all
+% close all
 %%
 addpath('SSA')
 N = 800;
@@ -9,7 +9,7 @@ load(['DATA/SSAinit_N', num2str(N), '.mat'])
 saveFlag = 0;
 
 %% Setup restart
-uObs = 0;
+uObs = 1;
 HObs = 1 - uObs;
 transientFlag = 1;
 MacayealFalg = 0;
@@ -42,7 +42,7 @@ elseif seasonType == 3
 end
 
 %% Hack for m=1
-pertubation = 0.1;
+pertubation = 0.5;
 lWin = x(1);
 rWin = x(end);
 C = C.*abs(u).^(m-1);
@@ -114,7 +114,7 @@ for i =  1:Nist
             F2 = 0*F2;
         end
         
-        % discrete system
+        % discrete system with implicit Euler
         Q = [A11 - 1./dt .* I,      A12;
             A21,                    A22;];
         
@@ -158,29 +158,33 @@ if saveFlag
     
     if transientFlag
         if MacayealFalg
-            save(['DATA/SSA_Macayeal_Adjoint_N', num2str(N), '_T', num2str(N_restart), '_', obsName ,'.mat'], ...
-                'x', 'ist', 'dt', 'N_restart', 'psi_mat', 'phi_mat', 'wght_mat', 'bwght_mat', 'v_mat', 'vWght_mat');
+            save(['DATA/SSA_Macayeal_Adjoint_N', num2str(N), '_T', num2str(N_restart),...
+                '_', obsName, '_S', num2str(seasonType), '.mat'], 'x', 'ist', 'dt', ...
+                'N_restart', 'psi_mat', 'phi_mat', 'wght_mat', 'bwght_mat', ...
+                'v_mat', 'vWght_mat', 'beta_mat');
             
         else
-            save(['DATA/SSAAdjoint_N', num2str(N), '_T', num2str(N_restart), '_', obsName ,'.mat'], ...
-                'x', 'ist', 'dt', 'N_restart', 'psi_mat', 'phi_mat', 'wght_mat', 'bwght_mat');
+            save(['DATA/SSAAdjoint_N', num2str(N), '_T', num2str(N_restart), '_', obsName , ...
+                '_S', num2str(seasonType), '.mat'], 'x', 'ist', 'dt', 'N_restart', 'psi_mat',...
+                'phi_mat', 'wght_mat', 'bwght_mat', 'beta_mat');
         end
         
     else
         if MacayealFalg
             save(['DATA/SSA_Macayeal_Adjoint_N', num2str(N), '_', obsName , ...
-                '.mat'], 'x', 'ist', 'dt', 'N_restart', 'psi_mat', ...
-                'phi_mat', 'wght_mat', 'bwght_mat', 'v_mat', 'vWght_mat');
+                '.mat'], 'x', 'ist', 'dt', 'N_restart', 'psi_mat', 'phi_mat', ...
+                'wght_mat', 'bwght_mat', 'v_mat', 'vWght_mat', 'beta_mat');
         else
             save(['DATA/SSAAdjoint_N', num2str(N), '_',obsName , '.mat'], ...
-                'x', 'ist', 'dt', 'N_restart', 'psi_mat', 'phi_mat', 'wght_mat', 'bwght_mat');
+                'x', 'ist', 'dt', 'N_restart', 'psi_mat', 'phi_mat', ...
+                'wght_mat', 'bwght_mat', 'beta_mat' );
         end
     end
 end
 
 
 %% Plot
-close all
+% close all
 
 tMesh = linspace(0, N_restart*dt, N_restart);
 [Xm, Tm] = meshgrid(x(2:end), tMesh);
