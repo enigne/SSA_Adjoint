@@ -2,29 +2,29 @@ clear
 % close all
 %%
 addpath('SSA')
-N = 800;
+N = 1600;
 
 %% Load final H and u from init file
 load(['DATA/SSAinit_N', num2str(N), '.mat'])
 saveFlag = 0;
 
 %% Setup restart
-uObs = 1;
+uObs = 0;
 HObs = 1 - uObs;
 transientFlag = 1;
 MacayealFalg = 0;
 
 %% For adjSSA you need the input
 rhoig = rhoi*g;
-sigma= 1e2;
+sigma= 1e3;
 ist = [450];
 n = 3;
-dt = 0.05;
-obsT = 2*dt; % time period of the observation, from final time backward
+dt = 0.05/4;
+T_final = 10.5;
+obsT = 0.1; % time period of the observation, from final time backward
 
 %% Pertubation in time
-N_restart = 400;
-T_final = dt * N_restart;
+N_restart = (T_final / dt);
 sInd = [0: (N_restart-1)];
 seasonType = 1;
 
