@@ -82,7 +82,7 @@ end
 
 %% Solve backward in time
 psi_old = zeros(N+1, 1);
-phi_old = zeros(N+1, 1);
+
 % Artificial viscosity
 epsilon = 1e3;
 
@@ -128,7 +128,8 @@ for i =  1:Nist
         
         % sensitivity
         wght = -phi .* u.^m;
-        bwght = (Dm(Nx-1, dx)*psi).*u + (Dm(Nx-1,dx)* phi) .*eta .* ux+ rhoig*phi.*(Dm(Nx-1,dx)*H + bxc(1:Nx-1));
+        bwght = (Dm(Nx-1, dx)*psi).*u + (Dm(Nx-1,dx)* phi) .*eta .* ux + ...
+            rhoig*phi.*(Dm(Nx-1,dx)*H + bxc(1:Nx-1));
         
         % save sensitivities
         psi_mat(1:glInd-1, t, i) = psi;
@@ -136,7 +137,6 @@ for i =  1:Nist
         phi_mat(1:glInd-1, t, i) = phi;
         wght_mat(1:glInd-1, t, i) = wght;
         bwght_mat(1:glInd-1, t, i) = bwght;
-        
         
         % solve steady state SSA using Macayeal's formulation
         % only valid for u observation
