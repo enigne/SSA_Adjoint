@@ -26,33 +26,36 @@
 %       Updated: 2020-01-09
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function adjointSSA(N, transientFlag, uObs, HObs, MacayealFalg, ist, ...
-    T_final, dtAdj, obsT, seasonType, sigma, epsilon)
-if nargin < 12
+    T_final, dtAdj, obsT, seasonType, amplitude, sigma, epsilon)
+if nargin < 13
     % Artificial viscosity
     epsilon = 1e3;
-    if nargin < 11
+    if nargin < 12
         % width of the observation
         sigma= 1e2;
-        if nargin < 10
-            seasonType = 0;
-            if nargin < 9
-                obsT = 0.1;
-                if nargin < 8
-                    dtAdj = 1;
-                    if nargin < 7
-                        T_final = 1;
-                        if nargin < 6
-                            ist = 0;
-                            if nargin < 5
-                                MacayealFalg = 0;
-                                if nargin < 4
-                                    if nargin < 3
-                                        uObs = 1;
-                                        if nargin < 2
-                                            transientFlag = 0;
+        if nargin < 11
+            amplitude = 0.5;
+            if nargin < 10
+                seasonType = 0;
+                if nargin < 9
+                    obsT = 0.1;
+                    if nargin < 8
+                        dtAdj = 1;
+                        if nargin < 7
+                            T_final = 1;
+                            if nargin < 6
+                                ist = 0;
+                                if nargin < 5
+                                    MacayealFalg = 0;
+                                    if nargin < 4
+                                        if nargin < 3
+                                            uObs = 1;
+                                            if nargin < 2
+                                                transientFlag = 0;
+                                            end
                                         end
+                                        HObs = 1 - uObs;
                                     end
-                                    HObs = 1 - uObs;
                                 end
                             end
                         end
@@ -85,9 +88,8 @@ elseif seasonType == 3
 end
 
 %% Hack for m=1
-pertubation = 0.5;
 C = C.*abs(u).^(m-1);
-dC = pertubation.*C;
+dC = amplitude.*C;
 m = 1;
 
 %% For adjSSA you need the input
@@ -206,8 +208,9 @@ if saveFlag
             
         else
             save(['DATA/SSAAdjoint_N', num2str(N), '_T', num2str(N_restart), '_', obsName , ...
-                '_S', num2str(seasonType), '.mat'], 'x', 'ist', 'dtAdj', 'N_restart', 'psi_mat',...
-                'phi_mat', 'wght_mat', 'bwght_mat', 'beta_mat', 'season');
+                '_S', num2str(seasonType), '_A', num2str(floor(amplitude*100)), '.mat'], ...
+                'x', 'ist', 'dtAdj', 'N_restart', 'psi_mat', 'phi_mat', ...
+                'wght_mat', 'bwght_mat', 'beta_mat', 'season');
         end
         
     else
