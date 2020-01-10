@@ -18,7 +18,7 @@ for i = 1: length(Ns)
         for k = 1: length(uObs)
             for l = 1: length(T_final)
             adjointSSA(Ns(i), transientFlags(j),  uObs(k), 1- uObs(k), ...
-                MacayealFlag, ist(j), T_final(l), dt, obsT, seasonType);
+                MacayealFlag, ist(j), T_final(l), dt, obsT, seasonType, amplitude);
             end
         end
     end
