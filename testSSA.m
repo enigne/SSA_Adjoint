@@ -9,7 +9,7 @@ load(['DATA/SSAinit_N', num2str(N), '.mat'])
 saveFlag = 0;
 
 %% Setup restart
-uObs = 0;
+uObs = 1;
 HObs = 1 - uObs;
 transientFlag = 1;
 MacayealFalg = 0;
@@ -17,10 +17,10 @@ MacayealFalg = 0;
 %% For adjSSA you need the input
 rhoig = rhoi*g;
 sigma= 1e3;
-ist = [450];
+ist = [900];
 n = 3;
 dt = 0.05/4;
-T_final = 10.5;
+T_final = 10.75;
 obsT = 0.1; % time period of the observation, from final time backward
 
 %% Pertubation in time
