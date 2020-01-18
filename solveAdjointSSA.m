@@ -6,11 +6,11 @@ transientFlags = 1;
 uObs = [0, 1];
 MacayealFlag = 0;
 ist = [900];
-T_final = [10, 10.25, 10.5, 10.75];
+T_final = [9.5];
 dt = 0.01;
 seasonType = 1;
 obsT = 0.1;
-amplitude = 0.1;
+amplitude = 0.5;
 
 %%
 for i = 1: length(Ns)
